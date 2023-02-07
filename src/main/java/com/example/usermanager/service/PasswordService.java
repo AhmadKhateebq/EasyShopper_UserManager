@@ -1,27 +1,28 @@
 package com.example.usermanager.service;
 
+
 import com.example.usermanager.exceptions.UserNotFoundException;
-import com.example.usermanager.model.AppUser;
-import com.example.usermanager.repository.AppUserRepository;
+import com.example.usermanager.model.PasswordUser;
+import com.example.usermanager.repository.PasswordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class AppUserService {
+public class PasswordService {
     @Autowired
-    private AppUserRepository repository;
+    private PasswordRepository repository;
 
-    public AppUser getUser(int id) throws Exception {
+    public PasswordUser getUser(int id) throws Exception {
         return repository.findById (id).orElseThrow (UserNotFoundException::new);
     }
 
-    public List<AppUser> getAllUsers() {
+    public List<PasswordUser> getAllUsers() {
         return repository.findAll ();
     }
 
-    public AppUser saveUser(AppUser user) {
+    public PasswordUser saveUser(PasswordUser user) {
         return repository.save (user);
     }
 
@@ -29,7 +30,7 @@ public class AppUserService {
         repository.deleteById (id);
     }
 
-    public void deleteUser(AppUser user) {
+    public void deleteUser(PasswordUser user) {
         repository.delete (user);
     }
 }
