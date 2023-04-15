@@ -12,7 +12,14 @@ public interface UserPasswordMapper {
         dto.setFname (user.getFname ());
         dto.setUsername (user.getUsername ());
         dto.setLname (user.getLname ());
-        dto.setRole (user.getRole ());
         return dto;
+    }
+    static AppUser USER_PASSWORD_DTO(UserDto dto){
+        AppUser appUser = new AppUser ();
+        appUser.setEmail (dto.getEmail ());
+        appUser.setFname (dto.getFname ());
+        appUser.setUsername (dto.getUsername ());
+        appUser.setLname (dto.getLname ());
+        return appUser;
     }
 }

@@ -16,7 +16,9 @@ public class AppUserService {
     public AppUser getUser(int id) throws Exception {
         return repository.findById (id).orElseThrow (UserNotFoundException::new);
     }
-
+    public AppUser getUserByUsername(String username) {
+        return repository.getAppUserByUsername (username);
+    }
     public List<AppUser> getAllUsers() {
         return repository.findAll ();
     }
