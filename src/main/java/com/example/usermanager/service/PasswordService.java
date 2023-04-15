@@ -2,7 +2,6 @@ package com.example.usermanager.service;
 
 
 import com.example.usermanager.exceptions.UserNotFoundException;
-import com.example.usermanager.model.AppUser;
 import com.example.usermanager.model.PasswordUser;
 import com.example.usermanager.repository.PasswordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
