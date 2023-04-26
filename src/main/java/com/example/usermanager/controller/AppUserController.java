@@ -1,6 +1,6 @@
 package com.example.usermanager.controller;
 
-import com.example.usermanager.annotation.JwtSecured;
+import com.example.usermanager.annotation.AdminSecured;
 import com.example.usermanager.model.AppUser;
 import com.example.usermanager.service.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ public class AppUserController {
     @Autowired
     private AppUserService service;
     @GetMapping("{id}")
-    @JwtSecured
+    @AdminSecured
     AppUser getUser(@PathVariable int id){
         try {
             return service.getUser (id);
@@ -24,6 +24,7 @@ public class AppUserController {
         }
     }
     @GetMapping
+    @AdminSecured
     List<AppUser> getAllUsers(){
         return service.getAllUsers ();
     }
@@ -32,9 +33,11 @@ public class AppUserController {
         return service.saveUser (appUser);
     }
     @DeleteMapping("{id}")
+    @AdminSecured
     void deleteUser(@PathVariable int id){
         service.deleteUserById (id);
     }
+    @AdminSecured
     @DeleteMapping
     void deleteUser(@RequestBody AppUser appUser){
         service.deleteUser (appUser);
