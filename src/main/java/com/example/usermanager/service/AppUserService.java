@@ -16,9 +16,11 @@ public class AppUserService {
     public AppUser getUser(int id) throws Exception {
         return repository.findById (id).orElseThrow (UserNotFoundException::new);
     }
+
     public AppUser getUserByUsername(String username) {
         return repository.getAppUserByUsername (username);
     }
+
     public List<AppUser> getAllUsers() {
         return repository.findAll ();
     }
@@ -33,5 +35,9 @@ public class AppUserService {
 
     public void deleteUser(AppUser user) {
         repository.delete (user);
+    }
+
+    public boolean userNameExists(String username) {
+        return getUserByUsername (username).getUsername ().equals (username);
     }
 }

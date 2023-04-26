@@ -1,5 +1,6 @@
 package com.example.usermanager.controller;
 
+import com.example.usermanager.annotation.JwtSecured;
 import com.example.usermanager.model.AppUser;
 import com.example.usermanager.service.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +10,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
+
 public class AppUserController {
     @Autowired
     private AppUserService service;
     @GetMapping("{id}")
+    @JwtSecured
     AppUser getUser(@PathVariable int id){
         try {
             return service.getUser (id);
