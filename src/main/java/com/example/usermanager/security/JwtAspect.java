@@ -11,11 +11,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Aspect
 @Component
@@ -49,8 +53,13 @@ public class JwtAspect {
         log.debug("Validating admin token for method: {}", methodName);
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes ();
         HttpServletRequest request = attributes.getRequest ();
+        HttpServletResponse response = attributes.getResponse();
         String authHeader = request.getHeader ("Authorization");
         if (!((authHeader != null) && authHeader.equals ("Bearer "+key)))
-            throw new UnauthorizedException ("Invalid Access");
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized");
+    }
+    @ExceptionHandler(UnauthorizedException.class)
+    public void handleUnauthorizedException(HttpServletResponse response) throws IOException {
+        response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized");
     }
 }
