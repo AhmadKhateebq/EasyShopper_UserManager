@@ -36,15 +36,15 @@ public class JwtAspect {
         log.debug("Validating JWT token for method: {}", methodName);
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes ();
         HttpServletRequest request = attributes.getRequest ();
+
+        HttpServletResponse response = attributes.getResponse();
         String authHeader = request.getHeader ("Authorization");
         if (authHeader == null || !authHeader.startsWith ("Bearer ")) {
-            throw new UnauthorizedException ("Missing or invalid Authorization header");
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), "no token found");
         }
-
         String token = authHeader.substring (7);
-
         if (!jwtUtil.validateToken (token)) {
-            throw new UnauthorizedException ("Invalid JWT token");
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), "invalid access token");
         }
     }
     @Before("execution(* com.example.usermanager.controller.*.*(..)) && @annotation(adminSecured)")
@@ -56,10 +56,6 @@ public class JwtAspect {
         HttpServletResponse response = attributes.getResponse();
         String authHeader = request.getHeader ("Authorization");
         if (!((authHeader != null) && authHeader.equals ("Bearer "+key)))
-            response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized");
-    }
-    @ExceptionHandler(UnauthorizedException.class)
-    public void handleUnauthorizedException(HttpServletResponse response) throws IOException {
-        response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized");
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), "invalid ");
     }
 }
