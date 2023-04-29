@@ -76,6 +76,7 @@ public class JWTUtil {
 
     public boolean validateToken(String token) {
         final String username = extractUsername (token);
+
         return (userService.userNameExists (username));
     }
 }

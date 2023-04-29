@@ -50,7 +50,7 @@ public class JwtAspect {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes ();
         HttpServletRequest request = attributes.getRequest ();
         String authHeader = request.getHeader ("Authorization");
-        if (!(authHeader == null) && authHeader.equals ("Bearer "+key))
+        if (!((authHeader != null) && authHeader.equals ("Bearer "+key)))
             throw new UnauthorizedException ("Invalid Access");
     }
 }
