@@ -3,10 +3,7 @@ package com.example.usermanager.util;
 import com.example.usermanager.model.AppUser;
 import com.example.usermanager.service.AppUserService;
 import com.example.usermanager.service.PasswordService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -74,9 +71,8 @@ public class JWTUtil {
         return Jwts.parser ().setSigningKey (SECRET_KEY).parseClaimsJws (token).getBody ();
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token) throws SignatureException {
         final String username = extractUsername (token);
-
         return (userService.userNameExists (username));
     }
 }
