@@ -1,5 +1,7 @@
 package com.example.usermanager.service;
 
+import com.example.usermanager.exceptions.UnauthorizedException;
+import com.example.usermanager.exceptions.UserNotFoundException;
 import com.example.usermanager.model.AppUser;
 import com.example.usermanager.model.PasswordUser;
 import com.example.usermanager.repository.AppUserRepository;
@@ -22,12 +24,13 @@ public class LoginService {
         return (getPassword.getPassword ().equals (password));
     }
 
-    public String loginUserName(String username, String password) {
+    public String loginUserName(String username, String password)throws UserNotFoundException {
         AppUser user = appUserRepository.getAppUserByUsername (username);
+
         if (user == null)
-            throw new RuntimeException ("user not found");
+            throw new UserNotFoundException ("user not found");
         if (!checkPassword (user.getId (), password)) {
-            throw new RuntimeException ("password is incorrect");
+            throw new UserNotFoundException ("password is incorrect");
         } else {
             return jwtUtil.generateToken (username);
         }

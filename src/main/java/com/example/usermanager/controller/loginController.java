@@ -1,8 +1,10 @@
 package com.example.usermanager.controller;
 
+import com.example.usermanager.exceptions.UserNotFoundException;
 import com.example.usermanager.model.LoginUser;
 import com.example.usermanager.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +16,13 @@ public class loginController {
     @Autowired
     LoginService service;
     @PostMapping
-    String login(@RequestBody LoginUser user){
-        return service.loginUserName (user.getUsername (), user.getPassword ());
+    ResponseEntity<String> login(@RequestBody LoginUser user){
+        try {
+
+            return ResponseEntity.ok (service.loginUserName (user.getUsername (), user.getPassword ()));
+        }catch (UserNotFoundException e){
+            return ResponseEntity.status (418).build ();
+        }
+
     }
 }
