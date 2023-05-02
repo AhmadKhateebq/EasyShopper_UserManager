@@ -13,7 +13,6 @@ import java.util.List;
 public class PasswordService {
     @Autowired
     private PasswordRepository repository;
-
     public PasswordUser getUser(int id) throws Exception {
         return repository.findById (id).orElseThrow (UserNotFoundException::new);
     }

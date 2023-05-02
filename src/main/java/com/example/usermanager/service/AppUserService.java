@@ -12,7 +12,6 @@ import java.util.List;
 public class AppUserService {
     @Autowired
     private AppUserRepository repository;
-
     public AppUser getUser(int id) throws Exception {
         return repository.findById (id).orElseThrow (UserNotFoundException::new);
     }
