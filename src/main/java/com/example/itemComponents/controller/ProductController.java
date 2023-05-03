@@ -3,7 +3,7 @@ package com.example.itemComponents.controller;
 import com.example.itemComponents.exception.ResourceNotFoundException;
 import com.example.itemComponents.model.Product;
 import com.example.itemComponents.service.ProductService;
-import com.example.userComponents.annotation.AdminSecured;
+import com.example.annotation.AdminSecured;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

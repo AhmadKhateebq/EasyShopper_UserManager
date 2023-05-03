@@ -22,6 +22,7 @@ public class PasswordService {
     }
 
     public void saveUser(PasswordUser user) {
+        //apply encryption
         repository.save (user);
     }
 

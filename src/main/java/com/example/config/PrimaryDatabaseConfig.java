@@ -1,6 +1,4 @@
 package com.example.config;
-
-
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -13,7 +11,6 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
@@ -26,8 +23,6 @@ import javax.sql.DataSource;
 )
 
 public class PrimaryDatabaseConfig {
-
-
     @Primary
     @Bean(name = "primaryEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean primaryEntityManagerFactory(EntityManagerFactoryBuilder builder,
@@ -37,8 +32,6 @@ public class PrimaryDatabaseConfig {
                 .packages ("com.example.userComponents")
                 .build ();
     }
-
-
     @Primary
     @Bean
     @ConfigurationProperties(prefix = "spring.users")

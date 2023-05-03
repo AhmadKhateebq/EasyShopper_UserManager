@@ -1,6 +1,6 @@
 package com.example.userComponents.controller;
 
-import com.example.userComponents.annotation.AdminSecured;
+import com.example.annotation.AdminSecured;
 import com.example.userComponents.model.AppUser;
 import com.example.userComponents.service.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;

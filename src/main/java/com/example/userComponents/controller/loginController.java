@@ -18,7 +18,6 @@ public class loginController {
     @PostMapping
     ResponseEntity<String> login(@RequestBody LoginUser user){
         try {
-
             return ResponseEntity.ok (service.loginUserName (user.getUsername (), user.getPassword ()));
         }catch (UserNotFoundException e){
             return ResponseEntity.status (418).build ();

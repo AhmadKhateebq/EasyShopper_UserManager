@@ -25,7 +25,6 @@ public class LoginService {
 
     public String loginUserName(String username, String password)throws UserNotFoundException {
         AppUser user = appUserRepository.getAppUserByUsername (username);
-
         if (user == null)
             throw new UserNotFoundException ("user not found");
         if (!checkPassword (user.getId (), password)) {

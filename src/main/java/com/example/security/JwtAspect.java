@@ -1,7 +1,7 @@
 package com.example.security;
 
-import com.example.userComponents.annotation.AdminSecured;
-import com.example.userComponents.annotation.JwtSecured;
+import com.example.annotation.AdminSecured;
+import com.example.annotation.JwtSecured;
 import com.example.util.JWTUtil;
 import io.jsonwebtoken.SignatureException;
 import org.aspectj.lang.JoinPoint;
@@ -53,7 +53,6 @@ public class JwtAspect {
         } catch (SignatureException a) {
             response.sendError (HttpStatus.UNAUTHORIZED.value (), "token invalid");
         }
-
     }
 
     @Before(("(execution(* com.example.userComponents.controller.*.*(..)) " +
@@ -72,3 +71,6 @@ public class JwtAspect {
             response.sendError (HttpStatus.UNAUTHORIZED.value (), "invalid ");
     }
 }
+/*
+eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhaG1hZGtoYXRlZWJxIiwiaWF0IjoxNjgzMDY1MDQ0fQ.VIoarut9YjP9-DjJPAfT__AkbrtYlTlqeF0w2aW4yeJoNNxiu182LmHFLYEzjYzcsVkGde5HpT9bJQuZY7M-IA
+*/
