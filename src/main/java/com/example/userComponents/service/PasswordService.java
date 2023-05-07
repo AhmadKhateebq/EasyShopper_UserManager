@@ -5,6 +5,7 @@ import com.example.userComponents.exceptions.UserNotFoundException;
 import com.example.userComponents.model.PasswordUser;
 import com.example.userComponents.repository.PasswordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +23,10 @@ public class PasswordService {
     }
 
     public void saveUser(PasswordUser user) {
-        //apply encryption
+        //password encryption
+        BCryptPasswordEncoder passwordPEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = passwordPEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
         repository.save (user);
     }
 
