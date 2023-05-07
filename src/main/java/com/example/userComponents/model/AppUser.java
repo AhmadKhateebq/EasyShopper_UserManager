@@ -15,8 +15,8 @@ public class AppUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
-    String UserName;
-    String FirstName;
-    String LastName;
-    String Email;
+    String username;
+    String fname;
+    String lname;
+    String email;
 }
