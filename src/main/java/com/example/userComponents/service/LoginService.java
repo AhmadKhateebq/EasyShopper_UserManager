@@ -1,6 +1,7 @@
 package com.example.userComponents.service;
 
 import com.example.userComponents.exceptions.UserNotFoundException;
+import com.example.userComponents.exceptions.WrongPasswordException;
 import com.example.userComponents.model.AppUser;
 import com.example.userComponents.model.PasswordUser;
 import com.example.userComponents.repository.AppUserRepository;
@@ -23,12 +24,12 @@ public class LoginService {
         return (getPassword.getPassword ().equals (password));
     }
 
-    public String loginUserName(String username, String password)throws UserNotFoundException {
+    public String loginUserName(String username, String password) throws UserNotFoundException, WrongPasswordException {
         AppUser user = appUserRepository.getAppUserByUsername (username);
         if (user == null)
             throw new UserNotFoundException ("user not found");
         if (!checkPassword (user.getId (), password)) {
-            throw new UserNotFoundException ("password is incorrect");
+            throw new WrongPasswordException ("password is incorrect");
         } else {
             return jwtUtil.generateToken (username);
         }

@@ -1,6 +1,7 @@
 package com.example.userComponents.controller;
 
 import com.example.userComponents.exceptions.UserNotFoundException;
+import com.example.userComponents.exceptions.WrongPasswordException;
 import com.example.userComponents.model.LoginUser;
 import com.example.userComponents.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ public class loginController {
             return ResponseEntity.ok (service.loginUserName (user.getUsername (), user.getPassword ()));
         }catch (UserNotFoundException e){
             return ResponseEntity.status (418).build ();
+        }catch (WrongPasswordException e1){
+            return ResponseEntity.status (401).build ();
         }
 
     }

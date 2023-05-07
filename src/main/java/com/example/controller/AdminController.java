@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ public class AdminController {
     private String token;
     @Value("${data.admin-key}")
     private String adminToken;
+    @ApiOperation(value = "get admin token")
     @GetMapping("/get-token")
     String getJwtToken(){
         return token;
