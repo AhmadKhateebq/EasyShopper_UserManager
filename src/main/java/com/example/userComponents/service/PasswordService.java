@@ -15,7 +15,11 @@ public class PasswordService {
     @Autowired
     private PasswordRepository repository;
     public PasswordUser getUser(int id) throws Exception {
-        return repository.findById (id).orElseThrow (UserNotFoundException::new);
+        PasswordUser user = repository.findById (id).orElseThrow (UserNotFoundException::new);
+        String password = user.getPassword();
+        //decode password
+        user.setPassword (password);
+        return user;
     }
 
     public List<PasswordUser> getAllUsers() {
