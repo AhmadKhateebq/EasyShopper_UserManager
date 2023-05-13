@@ -1,0 +1,24 @@
+
+ ------ 
+http:\localhost:8085\admin
+
+ ------ 
+http:\localhost:8085\list
+Get : [] | getAllUserLists
+Get : [/{id}] | getUserListById
+Delete : [/{id}] | deleteUserList
+
+ ------ 
+http:\localhost:8085\products
+Get : [] | getAllProducts
+Put : [/{id}] | updateProduct
+Post : [] | createProduct
+Get : [/{id}] | getProductById
+Delete : [/{id}] | deleteProduct
+
+ ------ 
+http:\localhost:8085\user
+
+Get : [] | getAllUsers
+Delete : [{id}] | deleteUser
+Delete : [] | deleteUser

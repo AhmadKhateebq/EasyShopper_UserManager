@@ -1,0 +1,14 @@
+
+ ------ 
+http:\localhost:8085\admin
+
+ ------ 
+http:\localhost:8085\list
+Get : [/u/{id}] | getUserListByUserId
+
+ ------ 
+http:\localhost:8085\products
+
+ ------ 
+http:\localhost:8085\user
+Get : [{id}] | getUser
