@@ -28,9 +28,10 @@ public class PasswordService {
 
     public void saveUser(PasswordUser user) {
         //password encryption
-//        BCryptPasswordEncoder passwordPEncoder = new BCryptPasswordEncoder();
-//        String encodedPassword = passwordPEncoder.encode(user.getPassword());
-//        user.setPassword(encodedPassword);
+        BCryptPasswordEncoder passwordPEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = passwordPEncoder.encode(user.getPassword());
+        System.out.println (encodedPassword);
+        user.setPassword(encodedPassword);
         repository.save (user);
     }
 

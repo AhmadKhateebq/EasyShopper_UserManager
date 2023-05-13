@@ -6,11 +6,14 @@ import com.example.userComponents.service.PasswordService;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+
 @Component
 public class JWTUtil {
     @Value("${data.key}")
@@ -19,16 +22,20 @@ public class JWTUtil {
     AppUserService userService;
     @Autowired
     PasswordService passwordService;
+    final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder ();
+
     public String getToken(String username, String password) {
         AppUser user = userService.getUserByUsername (username);
         try {
-            if (user.getUsername ().equals (username) && passwordService.getUser (user.getId ()).getPassword ().equals (password))
-                return generateToken (username,user.getId ());
+            if (user.getUsername ().equals (username) &&
+                    passwordEncoder.matches (password, passwordService.getUser (user.getId ()).getPassword ()))
+                return generateToken (username, user.getId ());
             else return null;
         } catch (Exception e) {
             throw new RuntimeException ("user not found");
         }
     }
+
     public boolean validate(String username, String password, String token) {
         AppUser user = userService.getUserByUsername (username);
         try {
@@ -39,11 +46,13 @@ public class JWTUtil {
         }
         return false;
     }
-    public String generateToken(String username,int user_id) {
+
+    public String generateToken(String username, int user_id) {
         Map<String, Object> claims = new HashMap<> ();
-        return createToken (claims, username,user_id);
+        return createToken (claims, username, user_id);
     }
-    private String createToken(Map<String, Object> claims, String subject,int user_id) {
+
+    private String createToken(Map<String, Object> claims, String subject, int user_id) {
         JwtBuilder jwts = Jwts.builder ();
         jwts.setClaims (claims);
         jwts.setSubject (subject);
@@ -52,23 +61,28 @@ public class JWTUtil {
         jwts.signWith (SignatureAlgorithm.HS512, SECRET_KEY);
         return jwts.compact ();
     }
+
     public String extractSubject(String token) {
         return extractClaim (token, Claims::getSubject);
     }
+
     public String extractId(String token) {
         return extractClaim (token, Claims::getId);
     }
+
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims (token);
         return claimsResolver.apply (claims);
     }
+
     public Claims extractAllClaims(String token) {
         return Jwts.parser ().setSigningKey (SECRET_KEY).parseClaimsJws (token).getBody ();
     }
-    public boolean validateToken(String token){
+
+    public boolean validateToken(String token) {
         String username = extractSubject (token);
-        int userId = Integer.parseInt(extractId (token));
+        int userId = Integer.parseInt (extractId (token));
         AppUser user = userService.getUserByUsername (username);
-        return user != null && user.getId() == userId;
+        return user != null && user.getId () == userId;
     }
 }

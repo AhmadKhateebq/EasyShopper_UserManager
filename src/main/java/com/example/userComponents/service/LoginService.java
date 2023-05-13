@@ -8,6 +8,7 @@ import com.example.userComponents.repository.AppUserRepository;
 import com.example.userComponents.repository.PasswordRepository;
 import com.example.util.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,10 +19,10 @@ public class LoginService {
     AppUserRepository appUserRepository;
     @Autowired
     JWTUtil jwtUtil;
-
+    final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder ();
     boolean checkPassword(int id, String password) {
         PasswordUser getPassword = passwordRepository.getPasswordUserByUserId (id);
-        return (getPassword.getPassword ().equals (password));
+        return (passwordEncoder.matches (password,getPassword.getPassword ()));
     }
 
     public String loginUserName(String username, String password) throws UserNotFoundException, WrongPasswordException {
