@@ -11,9 +11,8 @@ public class PasswordUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id",referencedColumnName = "id")
     @OneToOne
-    @MapsId
     AppUser user;
     String password;
 }

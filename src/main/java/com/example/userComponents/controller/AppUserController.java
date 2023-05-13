@@ -1,6 +1,7 @@
 package com.example.userComponents.controller;
 
 import com.example.annotation.AdminSecured;
+import com.example.annotation.UserSecured;
 import com.example.userComponents.model.AppUser;
 import com.example.userComponents.service.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ public class AppUserController {
     @Autowired
     private AppUserService service;
     @GetMapping("{id}")
-    @AdminSecured
+    @UserSecured
     AppUser getUser(@PathVariable int id){
         try {
             return service.getUser (id);

@@ -31,7 +31,7 @@ public class LoginService {
         if (!checkPassword (user.getId (), password)) {
             throw new WrongPasswordException ("password is incorrect");
         } else {
-            return jwtUtil.generateToken (username);
+            return jwtUtil.generateToken (username,user.getId ());
         }
     }
 

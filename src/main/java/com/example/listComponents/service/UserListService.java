@@ -38,4 +38,7 @@ public class UserListService {
     public void deleteById(Long id) {
         userListRepository.deleteById(id);
     }
+    public List<UserList> getUsersListByUserId(int id){
+        return userListRepository.getUserListByUserId (id);
+    }
 }
