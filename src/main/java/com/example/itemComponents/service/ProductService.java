@@ -10,8 +10,11 @@ import java.util.List;
 
 @Service
 public class ProductService {
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
+
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 
     public List<Product> getAllProducts() {
         return productRepository.findAll();
@@ -33,8 +36,6 @@ public class ProductService {
         product.setName(updatedProduct.getName());
         product.setBrand(updatedProduct.getBrand());
         product.setCategory(updatedProduct.getCategory());
-        product.setPrice(updatedProduct.getPrice());
-        product.setStock(updatedProduct.getStock());
         product.setDescription(updatedProduct.getDescription());
 
         return productRepository.save(product);

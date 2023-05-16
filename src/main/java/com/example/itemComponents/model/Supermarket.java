@@ -1,8 +1,10 @@
 package com.example.itemComponents.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -26,9 +28,10 @@ public class Supermarket {
 
     @Column(nullable = false)
     private String locationY;
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "supermarkets_products",
-            joinColumns = @JoinColumn(name = "supermarket_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id"))
-    private Set<Product> products = new HashSet<> ();
+//    @ManyToMany(fetch = FetchType.EAGER)
+//    @JoinTable(name = "supermarkets_products",
+//            joinColumns = @JoinColumn(name = "supermarket_id"),
+//            inverseJoinColumns = @JoinColumn(name = "product_id"))
+//    @JsonIgnoreProperties("supermarket")
+//    private Set<SupermarketProduct> products = new HashSet<> ();
 }

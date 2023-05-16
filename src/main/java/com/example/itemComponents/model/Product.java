@@ -26,15 +26,8 @@ public class Product {
     @Column(name = "category")
     private String category;
 
-    @Column(name = "price")
-    private BigDecimal price;
-
-    @Column(name = "stock")
-    private Integer stock;
-
     @Column(name = "description")
     private String description;
-
     // getters and setters
 }
 

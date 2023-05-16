@@ -1,38 +1,35 @@
 package com.example.itemComponents.controller;
 
 import com.example.annotation.AdminSecured;
+import com.example.itemComponents.controller.util.ProductDto;
 import com.example.itemComponents.controller.util.SupermarketDto;
 import com.example.itemComponents.exception.ResourceNotFoundException;
-import com.example.itemComponents.model.Product;
 import com.example.itemComponents.model.Supermarket;
+import com.example.itemComponents.model.SupermarketProduct;
+import com.example.itemComponents.repository.SupermarketProductRepository;
 import com.example.itemComponents.service.SupermarketService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/supermarkets")
 public class SupermarketController {
 
-    @Autowired
-    private SupermarketService supermarketService;
+    private final SupermarketService supermarketService;
+    private final SupermarketProductRepository supermarketProductRepository;
 
-    @AdminSecured
-    @GetMapping
-    public ResponseEntity<List<SupermarketDto>> getAllSupermarkets() {
-        List<SupermarketDto> supermarkets = supermarketService.getAllSupermarkets ();
-        return new ResponseEntity<> (supermarkets, HttpStatus.OK);
+    public SupermarketController(SupermarketService supermarketService, SupermarketProductRepository supermarketProductRepository) {
+        this.supermarketService = supermarketService;
+        this.supermarketProductRepository = supermarketProductRepository;
     }
 
     @AdminSecured
-    @GetMapping("/all")
-    public ResponseEntity<List<Supermarket>> getAllSupermarketsWithProducts() {
-        List<Supermarket> supermarkets = supermarketService.getAllSupermarketsWithProducts ();
+    @GetMapping
+    public ResponseEntity<List<Supermarket>> getAllSupermarkets() {
+        List<Supermarket> supermarkets = supermarketService.getAllSupermarkets ();
         return new ResponseEntity<> (supermarkets, HttpStatus.OK);
     }
 
@@ -50,11 +47,11 @@ public class SupermarketController {
 
     @AdminSecured
     @GetMapping("/{id}/products")
-    public ResponseEntity<List<Product>> getSupermarketProductsById(@PathVariable Long id) {
+    public ResponseEntity<List<SupermarketProduct>> getSupermarketProductsById(@PathVariable Long id) {
         Supermarket supermarket;
         try {
             supermarket = supermarketService.getSupermarketById (id);
-            return new ResponseEntity<> (supermarket.getProducts ().stream ().toList (), HttpStatus.OK);
+            return new ResponseEntity<> (supermarketProductRepository.getSupermarketProductBySupermarketId (supermarket.getId ()), HttpStatus.OK);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status (418).build ();
         }
@@ -100,8 +97,8 @@ public class SupermarketController {
 
     @AdminSecured
     @PostMapping("/{supermarketId}/products/{productId}")
-    public ResponseEntity<Void> addProductFromSupermarket(@PathVariable Long supermarketId, @PathVariable Long productId) {
-        supermarketService.addProductFromSupermarket (productId, supermarketId);
+    public ResponseEntity<Void> addProductFromSupermarket(@PathVariable Long supermarketId, @PathVariable Long productId,@RequestBody ProductDto productDto) {
+        supermarketService.addProductFromSupermarket (productId, supermarketId,productDto);
         return new ResponseEntity<> (HttpStatus.NO_CONTENT);
     }
 }
