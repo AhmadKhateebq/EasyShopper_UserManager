@@ -1,16 +1,32 @@
-CREATE DATABASE supermarket;
 
+CREATE DATABASE supermarket;
 USE supermarket;
 
 CREATE TABLE products (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
-  brand VARCHAR(255) NOT NULL,
-  category VARCHAR(255) NOT NULL,
-  price DECIMAL(10, 2) NOT NULL,
-  stock INT NOT NULL,
-  description TEXT
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        name VARCHAR(255) NOT NULL,
+                        brand VARCHAR(255) NOT NULL,
+                        category VARCHAR(255) NOT NULL,
+                        description TEXT
 );
+CREATE TABLE supermarkets (
+                            id INT AUTO_INCREMENT PRIMARY KEY,
+                            name VARCHAR(255) NOT NULL,
+                            locationX VARCHAR(255) NOT NULL,
+                            locationY VARCHAR(255) NOT NULL
+);
+CREATE TABLE supermarkets_products (
+                                     id INT AUTO_INCREMENT PRIMARY KEY,
+                                     supermarket_id INT,
+                                     product_id INT,
+                                     price double(10 , 2 ) default(null),
+    stock INT NOT NULL,
+    CONSTRAINT fk_supermarket_id_supermarket FOREIGN KEY (supermarket_id)
+        REFERENCES supermarkets (id),
+    CONSTRAINT fk_supermarket_product FOREIGN KEY (product_id)
+        REFERENCES products (id)
+);
+
 
 INSERT INTO products (name, brand, category, price, stock, description)
 VALUES 
