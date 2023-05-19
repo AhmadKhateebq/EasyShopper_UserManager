@@ -1,13 +1,12 @@
-package com.example.itemComponents.controller;
+package com.example.marketComponents.controller;
 
 import com.example.annotation.AdminSecured;
-import com.example.itemComponents.controller.util.ProductDto;
-import com.example.itemComponents.controller.util.SupermarketDto;
-import com.example.itemComponents.exception.ResourceNotFoundException;
-import com.example.itemComponents.model.Supermarket;
-import com.example.itemComponents.model.SupermarketProduct;
-import com.example.itemComponents.repository.SupermarketProductRepository;
-import com.example.itemComponents.service.SupermarketService;
+import com.example.marketComponents.controller.util.ProductDto;
+import com.example.marketComponents.exception.ResourceNotFoundException;
+import com.example.marketComponents.model.Supermarket;
+import com.example.marketComponents.model.SupermarketProduct;
+import com.example.marketComponents.repository.SupermarketProductRepository;
+import com.example.marketComponents.service.SupermarketService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

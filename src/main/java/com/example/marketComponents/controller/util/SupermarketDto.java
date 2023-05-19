@@ -1,6 +1,6 @@
-package com.example.itemComponents.controller.util;
+package com.example.marketComponents.controller.util;
 
-import com.example.itemComponents.model.Supermarket;
+import com.example.marketComponents.model.Supermarket;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

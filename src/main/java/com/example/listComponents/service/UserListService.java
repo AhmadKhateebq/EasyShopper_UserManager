@@ -1,6 +1,6 @@
 package com.example.listComponents.service;
 
-import com.example.itemComponents.exception.ResourceNotFoundException;
+import com.example.marketComponents.exception.ResourceNotFoundException;
 import com.example.listComponents.model.SequenceCounter;
 import com.example.listComponents.model.UserList;
 import com.example.listComponents.repository.SequenceRepository;

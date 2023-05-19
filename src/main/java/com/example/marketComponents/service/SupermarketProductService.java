@@ -1,7 +1,7 @@
-package com.example.itemComponents.service;
+package com.example.marketComponents.service;
 
-import com.example.itemComponents.model.SupermarketProduct;
-import com.example.itemComponents.repository.SupermarketProductRepository;
+import com.example.marketComponents.model.SupermarketProduct;
+import com.example.marketComponents.repository.SupermarketProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

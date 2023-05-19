@@ -1,8 +1,8 @@
-package com.example.itemComponents.controller;
+package com.example.marketComponents.controller;
 
-import com.example.itemComponents.exception.ResourceNotFoundException;
-import com.example.itemComponents.model.Product;
-import com.example.itemComponents.service.ProductService;
+import com.example.marketComponents.exception.ResourceNotFoundException;
+import com.example.marketComponents.model.Product;
+import com.example.marketComponents.service.ProductService;
 import com.example.annotation.AdminSecured;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

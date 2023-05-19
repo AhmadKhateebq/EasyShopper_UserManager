@@ -1,6 +1,6 @@
 package com.example.listComponents.model;
 
-import com.example.itemComponents.model.Product;
+import com.example.marketComponents.model.Product;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

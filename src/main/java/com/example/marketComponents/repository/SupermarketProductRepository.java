@@ -1,6 +1,6 @@
-package com.example.itemComponents.repository;
+package com.example.marketComponents.repository;
 
-import com.example.itemComponents.model.SupermarketProduct;
+import com.example.marketComponents.model.SupermarketProduct;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

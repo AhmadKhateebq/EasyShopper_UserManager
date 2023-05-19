@@ -1,18 +1,16 @@
-package com.example.itemComponents.service;
+package com.example.marketComponents.service;
 
-import com.example.itemComponents.controller.util.ProductDto;
-import com.example.itemComponents.controller.util.SupermarketDto;
-import com.example.itemComponents.exception.ResourceNotFoundException;
-import com.example.itemComponents.model.Product;
-import com.example.itemComponents.model.Supermarket;
-import com.example.itemComponents.model.SupermarketProduct;
-import com.example.itemComponents.repository.ProductRepository;
-import com.example.itemComponents.repository.SupermarketRepository;
+import com.example.marketComponents.controller.util.ProductDto;
+import com.example.marketComponents.exception.ResourceNotFoundException;
+import com.example.marketComponents.model.Product;
+import com.example.marketComponents.model.Supermarket;
+import com.example.marketComponents.model.SupermarketProduct;
+import com.example.marketComponents.repository.ProductRepository;
+import com.example.marketComponents.repository.SupermarketRepository;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class SupermarketService {

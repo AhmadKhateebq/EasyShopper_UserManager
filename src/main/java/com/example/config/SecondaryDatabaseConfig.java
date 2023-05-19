@@ -21,7 +21,7 @@ import javax.sql.DataSource;
 @EnableJpaRepositories(
         entityManagerFactoryRef = "secondaryEntityManagerFactory",
         transactionManagerRef = "secondaryTransactionManager",
-        basePackages = {"com.example.itemComponents"}
+        basePackages = {"com.example.marketComponents"}
 )
 public class SecondaryDatabaseConfig {
 
@@ -36,7 +36,7 @@ public class SecondaryDatabaseConfig {
                                                                                 @Qualifier("secondaryDataSource") DataSource secondaryDataSource) {
         return builder
                 .dataSource (secondaryDataSource)
-                .packages ("com.example.itemComponents")
+                .packages ("com.example.marketComponents")
                 .build ();
     }
 

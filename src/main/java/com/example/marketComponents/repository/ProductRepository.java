@@ -1,10 +1,8 @@
-package com.example.itemComponents.repository;
+package com.example.marketComponents.repository;
 
-import com.example.itemComponents.model.Product;
+import com.example.marketComponents.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
