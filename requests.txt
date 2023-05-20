@@ -1,0 +1,7 @@
+{
+    "username":"ahmadkhateebq",
+    "fname":"ahmad",
+    "lname":"khateeb",
+    "email":"ahmadkhateebq@gmail.com",
+    "password":"12345678"
+}

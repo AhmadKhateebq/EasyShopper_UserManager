@@ -11,4 +11,4 @@ http:\localhost:8085\products
 
  ------ 
 http:\localhost:8085\user
-Get : [{id}] | getUser
+Get : [/{id}] | getUser
