@@ -14,7 +14,7 @@ import java.util.List;
 public class PasswordService {
     @Autowired
     private PasswordRepository repository;
-    public PasswordUser getUser(int id) throws Exception {
+    public PasswordUser getUser(int id) throws UserNotFoundException {
         PasswordUser user = repository.findById (id).orElseThrow (UserNotFoundException::new);
         String password = user.getPassword();
         //decode password
