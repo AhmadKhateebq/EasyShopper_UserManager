@@ -30,10 +30,6 @@ public class AppUserController {
     List<AppUser> getAllUsers(){
         return service.getAllUsers ();
     }
-    @PostMapping
-    AppUser addUser(@RequestBody AppUser appUser){
-        return service.saveUser (appUser);
-    }
     @DeleteMapping("/{id}")
     @AdminSecured
     ResponseEntity<Object> deleteUser(@PathVariable int id){
