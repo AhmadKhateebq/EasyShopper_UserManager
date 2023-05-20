@@ -32,10 +32,6 @@ public class AppUserService {
         repository.deleteById (id);
     }
 
-    public void deleteUser(AppUser user) {
-        repository.delete (user);
-    }
-
     public boolean userNameExists(String username) {
         return getUserByUsername (username).getUsername ().equals (username);
     }

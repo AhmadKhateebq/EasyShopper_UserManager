@@ -37,9 +37,4 @@ public class AppUserController {
     void deleteUser(@PathVariable int id){
         service.deleteUserById (id);
     }
-    @AdminSecured
-    @DeleteMapping
-    void deleteUser(@RequestBody AppUser appUser){
-        service.deleteUser (appUser);
-    }
 }
