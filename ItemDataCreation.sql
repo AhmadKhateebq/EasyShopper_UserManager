@@ -26,15 +26,14 @@ CREATE TABLE supermarkets_products (
         REFERENCES products (id)
 );
 
-
-INSERT INTO products (name, brand, category, price, stock, description)
-VALUES 
-  ('Apples', 'Red Delicious', 'Fruit', 2, 100, 'Sweet and juicy apples.'),
-  ('Bananas', 'Chiquita', 'Fruit', 05, 200, 'Perfectly ripe bananas.'),
-  ('Milk', 'Organic Valley', 'Dairy', 3.5, 50, 'Fresh, organic milk.'),
-  ('Eggs', 'Eggland\'s Best', 'Dairy', 3, 100, 'Large, cage-free eggs.'),
-  ('Bread', 'Wonder Bread', 'Bakery', 2.5, 75, 'Classic white bread.'),
-  ('Pasta', 'Barilla', 'Pantry', 2, 150, 'Perfect for a quick and easy dinner.'),
-  ('Cereal', 'Kellogg\'s', 'Breakfast', 4, 50, 'Crunchy and delicious cereal.'),
-  ('Chicken', 'Perdue', 'Meat', 6, 25, 'Fresh chicken breasts.'),
-  ('Beef', 'Angus Beef', 'Meat', 10, 10, 'High-quality, grass-fed beef.');
+INSERT INTO products (name, brand, category,  description)
+VALUES
+    ('Apples', 'Red Delicious', 'Fruit',  'Sweet and juicy apples.'),
+    ('Bananas', 'Chiquita', 'Fruit', 'Perfectly ripe bananas.'),
+    ('Milk', 'Organic Valley', 'Dairy', 'Fresh, organic milk.'),
+    ('Eggs', 'Eggland\'s Best', 'Dairy', 'Large, cage-free eggs.'),
+  ('Bread', 'Wonder Bread', 'Bakery', 'Classic white bread.'),
+  ('Pasta', 'Barilla', 'Pantry', 'Perfect for a quick and easy dinner.'),
+  ('Cereal', 'Kellogg\'s', 'Breakfast',  'Crunchy and delicious cereal.'),
+    ('Chicken', 'Perdue', 'Meat',  'Fresh chicken breasts.'),
+    ('Beef', 'Angus Beef', 'Meat',  'High-quality, grass-fed beef.');
