@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user/")
+@RequestMapping("/user")
 public class AppUserController {
     @Autowired
     private AppUserService service;
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     @UserSecured
     AppUser getUser(@PathVariable int id){
         try {
@@ -34,7 +34,7 @@ public class AppUserController {
     AppUser addUser(@RequestBody AppUser appUser){
         return service.saveUser (appUser);
     }
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     @AdminSecured
     ResponseEntity<Object> deleteUser(@PathVariable int id){
         try {
