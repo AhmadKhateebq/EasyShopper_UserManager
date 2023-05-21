@@ -31,4 +31,7 @@ public class SupermarketProductService {
     public void deleteById(Long id) {
         supermarketProductRepository.deleteById(id);
     }
+    public void deleteById(SupermarketProduct supermarketProduct) {
+        supermarketProductRepository.delete (supermarketProduct);
+    }
 }

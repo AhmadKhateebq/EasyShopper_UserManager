@@ -7,6 +7,8 @@ import com.example.marketComponents.model.Supermarket;
 import com.example.marketComponents.model.SupermarketProduct;
 import com.example.marketComponents.repository.ProductRepository;
 import com.example.marketComponents.repository.SupermarketRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -20,6 +22,7 @@ public class SupermarketService {
     SupermarketProductService supermarketProductService;
     final
     ProductRepository productRepository;
+    private static final Logger log = LoggerFactory.getLogger (SupermarketService.class);
 
     public SupermarketService(SupermarketRepository supermarketRepository, SupermarketProductService supermarketProductService, ProductRepository productRepository) {
         this.supermarketRepository = supermarketRepository;
@@ -34,6 +37,7 @@ public class SupermarketService {
     public List<Supermarket> getAllSupermarkets() {
         return supermarketRepository.findAll ();
     }
+
     public List<SupermarketProduct> getAllSupermarketspr() {
         return supermarketProductService.getAll ();
     }
@@ -57,17 +61,21 @@ public class SupermarketService {
 
     public void deleteSupermarket(Long id) throws ResourceNotFoundException {
         Supermarket supermarket = getSupermarketById (id);
+        supermarketProductService.getAll ().stream ()
+                .filter (s -> s.getSupermarket ().equals (supermarket)).toList ()
+                .forEach (s -> supermarketProductService.deleteById (s.getId ()));
         supermarketRepository.delete (supermarket);
     }
 
-    public void removeProductFromSupermarket(Long productId, Long supermarketId) throws EntityNotFoundException {
+    public void removeProductFromSupermarket(Long productId, Long supermarketId) throws ResourceNotFoundException {
         Supermarket supermarket = supermarketRepository.findById (supermarketId)
-                .orElseThrow (() -> new EntityNotFoundException ("Supermarket not found with id: " + supermarketId));
-
-        SupermarketProduct product = supermarketProductService.getById (productId)
-                .orElseThrow (() -> new EntityNotFoundException ("Product not found with id: " + productId));
-
-        supermarketRepository.save (supermarket);
+                .orElseThrow (() -> new ResourceNotFoundException ("Supermarket not found with id: " + supermarketId));
+        Product product = productRepository.findById (productId)
+                .orElseThrow (() -> new ResourceNotFoundException ("Product not found with id: " + productId));
+        SupermarketProduct supermarketProduct = supermarketProductService.getAll ().stream ()
+                .filter (s -> s.getSupermarket ().equals (supermarket))
+                .filter (s -> s.getProduct ().equals (product)).toList ().get (0);
+        supermarketProductService.deleteById (supermarketProduct.getId ());
     }
 
     public void addProductFromSupermarket(Long productId, Long supermarketId, ProductDto productDto) throws EntityNotFoundException {

@@ -90,7 +90,11 @@ public class SupermarketController {
     @AdminSecured
     @DeleteMapping("/{supermarketId}/products/{productId}")
     public ResponseEntity<Void> removeProductFromSupermarket(@PathVariable Long supermarketId, @PathVariable Long productId) {
-        supermarketService.removeProductFromSupermarket (productId, supermarketId);
+        try {
+            supermarketService.removeProductFromSupermarket (productId, supermarketId);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status (418).build ();
+        }
         return new ResponseEntity<> (HttpStatus.NO_CONTENT);
     }
 
