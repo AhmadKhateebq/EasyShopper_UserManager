@@ -14,26 +14,34 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class LoginService {
-    @Autowired
+    final
     PasswordRepository passwordRepository;
-    @Autowired
+    final
     AppUserRepository appUserRepository;
-    @Autowired
+    final
     JWTUtil jwtUtil;
     @Value("${data.admin.username}")
     String adminUser;
     @Value("${data.admin.password}")
     String adminPassword;
     final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder ();
+
+    @Autowired
+    public LoginService(PasswordRepository passwordRepository, AppUserRepository appUserRepository, JWTUtil jwtUtil) {
+        this.passwordRepository = passwordRepository;
+        this.appUserRepository = appUserRepository;
+        this.jwtUtil = jwtUtil;
+    }
+
     boolean checkPassword(int id, String password) {
         PasswordUser getPassword = passwordRepository.getPasswordUserByUserId (id);
-        return (passwordEncoder.matches (password,getPassword.getPassword ()));
+        return (passwordEncoder.matches (password, getPassword.getPassword ()));
     }
 
     public String loginUserName(String username, String password) throws UserNotFoundException, WrongPasswordException {
         AppUser user = appUserRepository.getAppUserByUsername (username);
-        if (user == null){
-            if (username.equals (adminUser)&&password.equals (adminPassword))
+        if (user == null) {
+            if (username.equals (adminUser) && password.equals (adminPassword))
                 return "1477";
             else
                 throw new UserNotFoundException ("user not found");
@@ -41,7 +49,7 @@ public class LoginService {
         if (!checkPassword (user.getId (), password)) {
             throw new WrongPasswordException ("password is incorrect");
         } else {
-            return jwtUtil.generateToken (username,user.getId ());
+            return jwtUtil.generateToken (username, user.getId ());
         }
     }
 

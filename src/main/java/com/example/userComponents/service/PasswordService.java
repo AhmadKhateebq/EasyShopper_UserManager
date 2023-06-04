@@ -12,11 +12,16 @@ import java.util.List;
 
 @Service
 public class PasswordService {
+    private final PasswordRepository repository;
+
     @Autowired
-    private PasswordRepository repository;
+    public PasswordService(PasswordRepository repository) {
+        this.repository = repository;
+    }
+
     public PasswordUser getUser(int id) throws UserNotFoundException {
         PasswordUser user = repository.findById (id).orElseThrow (UserNotFoundException::new);
-        String password = user.getPassword();
+        String password = user.getPassword ();
         //decode password
         user.setPassword (password);
         return user;
@@ -28,10 +33,10 @@ public class PasswordService {
 
     public void saveUser(PasswordUser user) {
         //password encryption
-        BCryptPasswordEncoder passwordPEncoder = new BCryptPasswordEncoder();
-        String encodedPassword = passwordPEncoder.encode(user.getPassword());
+        BCryptPasswordEncoder passwordPEncoder = new BCryptPasswordEncoder ();
+        String encodedPassword = passwordPEncoder.encode (user.getPassword ());
         System.out.println (encodedPassword);
-        user.setPassword(encodedPassword);
+        user.setPassword (encodedPassword);
         repository.save (user);
     }
 
@@ -42,7 +47,8 @@ public class PasswordService {
     public void deleteUser(PasswordUser user) {
         repository.delete (user);
     }
-    public PasswordUser searchByUserId(int id){
+
+    public PasswordUser searchByUserId(int id) {
         return repository.getPasswordUserByUserId (id);
     }
 }

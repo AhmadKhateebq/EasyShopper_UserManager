@@ -11,12 +11,18 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class RegisterService {
-    @Autowired
+    final
     AppUserService appUserService;
-    @Autowired
+    final
     PasswordService passwordService;
-    @Autowired
+    final
     JWTUtil jwtUtil;
+    @Autowired
+    public RegisterService(AppUserService appUserService, PasswordService passwordService, JWTUtil jwtUtil) {
+        this.appUserService = appUserService;
+        this.passwordService = passwordService;
+        this.jwtUtil = jwtUtil;
+    }
 
     public String register(UserDto dto) throws UserNotFoundException {
         if (appUserService.getUserByUsername (dto.getUsername ()) == null) {
@@ -26,7 +32,7 @@ public class RegisterService {
             passwordUser.setUser (appUserService.getUserByUsername (dto.getUsername ()));
             passwordService.saveUser (passwordUser);
             return jwtUtil.generateToken (appUser.getUsername (), appUser.getId ());
-        }else throw new UserNotFoundException ();
+        } else throw new UserNotFoundException ();
     }
 
 }

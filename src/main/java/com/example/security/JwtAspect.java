@@ -1,8 +1,12 @@
 package com.example.security;
 
 import com.example.annotation.AdminSecured;
-import com.example.annotation.JwtSecured;
+import com.example.annotation.EditorSecured;
 import com.example.annotation.UserSecured;
+import com.example.annotation.ViewerSecured;
+import com.example.listComponents.model.UserList;
+import com.example.listComponents.service.UserListService;
+import com.example.marketComponents.exception.ResourceNotFoundException;
 import com.example.util.JWTUtil;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -15,101 +19,176 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Optional;
 
 @Aspect
 @Component
 public class JwtAspect {
-    @Autowired
-    private JWTUtil jwtUtil;
+    private final JWTUtil jwtUtil;
     @Value("${data.admin-key}")
     private String key;
     private static final Logger log = LoggerFactory.getLogger (JwtAspect.class);
+    private final UserListService listService;
 
-    //    @Before(
-//            ("(execution(* com.example.userComponents.controller.*.*(..)) " +
-//                    "|| execution(* com.example.itemComponents.controller.*.*(..))) " +
-//                    "|| execution(* com.example.listComponents.controller.*.*(..)))") +
-//                    "&& @annotation(jwtSecured)")
-    @Before("@annotation(jwtSecured)")
-    public void validateJwt(JoinPoint joinPoint, JwtSecured jwtSecured) throws Throwable {
-        String methodName = joinPoint.getSignature ().getName ();
-        log.debug ("Validating JWT token for method: {}", methodName);
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes ();
-        HttpServletRequest request = attributes.getRequest ();
-        HttpServletResponse response = attributes.getResponse ();
-        String authHeader = request.getHeader ("Authorization");
-        if (authHeader == null || !authHeader.startsWith ("Bearer ")) {
-            response.sendError (HttpStatus.UNAUTHORIZED.value (), "no token found");
-            return;
-        }
-        try {
-            String token = authHeader.substring (7);
-            if (!token.equals (key))
-                if (!jwtUtil.validateToken (token)) {
-                    response.sendError (HttpStatus.UNAUTHORIZED.value (), "invalid access token");
-                }
-        } catch (NullPointerException e) {
-            response.sendError (HttpStatus.UNAUTHORIZED.value (), "no token found");
-        } catch (SignatureException | MalformedJwtException a) {
-            response.sendError (HttpStatus.UNAUTHORIZED.value (), "token invalid");
-        }
+    @Autowired
+    public JwtAspect(JWTUtil jwtUtil, UserListService listService) {
+        this.jwtUtil = jwtUtil;
+        this.listService = listService;
     }
 
-    //    @Before(
-//            ("(execution(* com.example.userComponents.controller.*.*(..)) " +
-//                    "|| execution(* com.example.itemComponents.controller.*.*(..))) " +
-//                    "|| execution(* com.example.listComponents.controller.*.*(..)))") +
-//                    "&& @annotation(adminSecured)"
-//    )
+
     @Before(" @annotation(adminSecured)")
-    public void validateAdmin(JoinPoint joinPoint, AdminSecured adminSecured) throws Throwable {
+    public void validateAdmin(JoinPoint joinPoint, AdminSecured adminSecured) {
         String methodName = joinPoint.getSignature ().getName ();
         log.debug ("Validating admin token for method: {}", methodName);
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes ();
-        HttpServletRequest request = attributes.getRequest ();
-        HttpServletResponse response = attributes.getResponse ();
-        String authHeader = request.getHeader ("Authorization");
+        String authHeader = getAuthHeader ();
         if (!((authHeader != null) && authHeader.equals ("Bearer " + key)))
-            response.sendError (HttpStatus.UNAUTHORIZED.value (), "invalid ");
+            sendError (HttpStatus.UNAUTHORIZED.value (), "invalid ");
     }
-
     @Before("@annotation(userSecured)")
-    public void validateUserId(JoinPoint joinPoint, UserSecured userSecured) throws Exception {
+    public void validateUserId(JoinPoint joinPoint, UserSecured userSecured) {
         Object[] methodArgs = joinPoint.getArgs ();
         String methodName = joinPoint.getSignature ().getName ();
         log.debug ("Validating JWT token for method: {}", methodName);
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes ();
-        HttpServletRequest request = attributes.getRequest ();
-        HttpServletResponse response = attributes.getResponse ();
-        String authHeader = request.getHeader ("Authorization");
+        String authHeader = getAuthHeader ();
         if (authHeader == null || !authHeader.startsWith ("Bearer ")) {
-            response.sendError (HttpStatus.UNAUTHORIZED.value (), "no token found");
+            sendError (HttpStatus.UNAUTHORIZED.value (), "no token found");
             return;
         }
         try {
             String token = authHeader.substring (7);
             if (!token.equals (key)) {
-                if (Integer.parseInt (jwtUtil.extractId (token)) != (int) methodArgs[0]) {
-                    response.sendError (HttpStatus.LOCKED.value (), "token id not matched");
+                if (jwtUtil.extractId (token) != (int) methodArgs[0]) {
+                    sendError (HttpStatus.LOCKED.value (), "token id not matched");
                     return;
                 }
                 if (!jwtUtil.validateToken (token)) {
-                    response.sendError (HttpStatus.UNAUTHORIZED.value (), "invalid access token");
+                    sendError (HttpStatus.UNAUTHORIZED.value (), "invalid access token");
                 }
             }
-
         } catch (NullPointerException e) {
-            response.sendError (HttpStatus.UNAUTHORIZED.value (), "no token found");
+            sendError (HttpStatus.UNAUTHORIZED.value (), "no token found");
         } catch (SignatureException | MalformedJwtException a) {
-            response.sendError (HttpStatus.UNAUTHORIZED.value (), "token invalid");
+            sendError (HttpStatus.UNAUTHORIZED.value (), "token invalid");
         }
     }
+    @Before("@annotation(editorSecured)")
+    public void validateEditor(JoinPoint joinPoint, EditorSecured editorSecured) {
+        String methodName = joinPoint.getSignature ().getName ();
+        Object[] methodArgs = joinPoint.getArgs ();
+        log.debug ("Validating JWT token for method: {}", methodName);
+        String authHeader = getAuthHeader ();
+        if (authHeader == null || !authHeader.startsWith ("Bearer ")) {
+            sendError (HttpStatus.UNAUTHORIZED.value (), "no token found");
+            return;
+        }
+        try {
+            String token = authHeader.substring (7);
+            if (!token.equals (key)) {
+                if (!jwtUtil.validateToken (token)) {
+                    sendError (HttpStatus.UNAUTHORIZED.value (), "invalid access token");
+                }
+                long listId = (long) methodArgs[0];
+                UserList userList = getUserListById (listId);
+                int userId = jwtUtil.extractId (token);
+                if (userList == null || (isListNotSharedWithUser (userList, userId)&&canEdit (userList,userId))) {
+                    sendError (HttpStatus.UNAUTHORIZED.value (), "list not shared with you");
+                }
+            }
+        } catch (NullPointerException e) {
+            sendError (HttpStatus.UNAUTHORIZED.value (), "no token found");
+        } catch (SignatureException | MalformedJwtException a) {
+            sendError (HttpStatus.UNAUTHORIZED.value (), "token invalid");
+        }
+    }
+    @Before("@annotation(viewerSecured)")
+    public void validateViewer(JoinPoint joinPoint, ViewerSecured viewerSecured) {
+        String methodName = joinPoint.getSignature().getName();
+        Object[] methodArgs = joinPoint.getArgs();
+        log.debug("Validating JWT token for method: {}", methodName);
+        String authHeader = getAuthHeader();
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            sendError(HttpStatus.UNAUTHORIZED.value(), "no token found");
+            return;
+        }
+        try {
+            String token = authHeader.substring(7);
+            if (!token.equals(key)) {
+                if (!jwtUtil.validateToken(token)) {
+                    sendError(HttpStatus.UNAUTHORIZED.value(), "invalid access token");
+                }
+                long listId = (long) methodArgs[0];
+                UserList userList = getUserListById(listId);
+                int userId = jwtUtil.extractId(token);
+                if (userList == null || isListNotSharedWithUser (userList, userId)) {
+                    sendError(HttpStatus.UNAUTHORIZED.value(), "list not shared with you");
+                }
+            }
+        } catch (NullPointerException e) {
+            sendError(HttpStatus.UNAUTHORIZED.value(), "no token found");
+        } catch (SignatureException | MalformedJwtException a) {
+            sendError(HttpStatus.UNAUTHORIZED.value(), "token invalid");
+        }
+    }
+
+    private Optional<ServletRequestAttributes> getRequestAttributes() {
+        try {
+            RequestAttributes attributes = RequestContextHolder.getRequestAttributes ();
+            if (attributes instanceof ServletRequestAttributes) {
+                return Optional.of ((ServletRequestAttributes) attributes);
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace ();
+        }
+        return Optional.empty ();
+    }
+
+    private UserList getUserListById(long listId) {
+        try {
+            return listService.findById (listId);
+        } catch (ResourceNotFoundException e) {
+            sendError (428, "list not found");
+            return null;
+        }
+    }
+
+    private boolean isListNotSharedWithUser(UserList userList, int userId) {
+        return userList.isPrivate () || !userList.sharedWith (userId);
+    }
+    private boolean canEdit(UserList userList, int userId) {
+        return userList.sharedWith (userId);
+    }
+
+    private Optional<HttpServletRequest> getRequest() {
+        return getRequestAttributes ()
+                .map (ServletRequestAttributes::getRequest);
+    }
+
+    private Optional<HttpServletResponse> getResponse() {
+        return getRequestAttributes ()
+                .map (ServletRequestAttributes::getResponse);
+    }
+
+    private String getAuthHeader() {
+        return getRequest ()
+                .map (request -> request.getHeader ("Authorization"))
+                .orElse (null);
+    }
+
+    private void sendError(int statusCode, String errorMessage) {
+        getResponse ().ifPresent (response -> {
+            try {
+                response.sendError (statusCode, errorMessage);
+            } catch (IOException e) {
+                throw new RuntimeException (e);
+            }
+        });
+    }
 }
-/*
-eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhaG1hZGtoYXRlZWJxIiwiaWF0IjoxNjgzMDY1MDQ0fQ.VIoarut9YjP9-DjJPAfT__AkbrtYlTlqeF0w2aW4yeJoNNxiu182LmHFLYEzjYzcsVkGde5HpT9bJQuZY7M-IA
-*/

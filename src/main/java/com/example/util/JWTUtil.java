@@ -18,11 +18,16 @@ import java.util.function.Function;
 public class JWTUtil {
     @Value("${data.key}")
     private String SECRET_KEY;
-    @Autowired
+    final
     AppUserService userService;
-    @Autowired
+    final
     PasswordService passwordService;
     final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder ();
+    @Autowired
+    public JWTUtil(AppUserService userService, PasswordService passwordService) {
+        this.userService = userService;
+        this.passwordService = passwordService;
+    }
 
     public String getToken(String username, String password) {
         AppUser user = userService.getUserByUsername (username);
@@ -66,8 +71,9 @@ public class JWTUtil {
         return extractClaim (token, Claims::getSubject);
     }
 
-    public String extractId(String token) {
-        return extractClaim (token, Claims::getId);
+    public int extractId(String token) {
+        System.out.println (extractClaim (token,Claims::getId));
+        return Integer.parseInt (extractClaim (token, Claims::getId));
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
@@ -81,7 +87,7 @@ public class JWTUtil {
 
     public boolean validateToken(String token) {
         String username = extractSubject (token);
-        int userId = Integer.parseInt (extractId (token));
+        int userId = extractId (token);
         AppUser user = userService.getUserByUsername (username);
         return user != null && user.getId () == userId;
     }

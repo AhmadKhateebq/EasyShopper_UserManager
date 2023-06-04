@@ -16,7 +16,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/supermarkets")
 public class SupermarketController {
-
     private final SupermarketService supermarketService;
     private final SupermarketProductRepository supermarketProductRepository;
 
@@ -25,14 +24,12 @@ public class SupermarketController {
         this.supermarketProductRepository = supermarketProductRepository;
     }
 
-    @AdminSecured
     @GetMapping
     public ResponseEntity<List<Supermarket>> getAllSupermarkets() {
         List<Supermarket> supermarkets = supermarketService.getAllSupermarkets ();
         return new ResponseEntity<> (supermarkets, HttpStatus.OK);
     }
 
-    @AdminSecured
     @GetMapping("/{id}")
     public ResponseEntity<Supermarket> getSupermarketById(@PathVariable Long id) {
         Supermarket supermarket;
@@ -44,7 +41,6 @@ public class SupermarketController {
         }
     }
 
-    @AdminSecured
     @GetMapping("/{id}/products")
     public ResponseEntity<List<SupermarketProduct>> getSupermarketProductsById(@PathVariable Long id) {
         Supermarket supermarket;
@@ -100,8 +96,8 @@ public class SupermarketController {
 
     @AdminSecured
     @PostMapping("/{supermarketId}/products/{productId}")
-    public ResponseEntity<Void> addProductFromSupermarket(@PathVariable Long supermarketId, @PathVariable Long productId,@RequestBody ProductDto productDto) {
-        supermarketService.addProductFromSupermarket (productId, supermarketId,productDto);
+    public ResponseEntity<Void> addProductFromSupermarket(@PathVariable Long supermarketId, @PathVariable Long productId, @RequestBody ProductDto productDto) {
+        supermarketService.addProductFromSupermarket (productId, supermarketId, productDto);
         return new ResponseEntity<> (HttpStatus.NO_CONTENT);
     }
 }

@@ -14,8 +14,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 public class AppUserController {
+    private final AppUserService service;
     @Autowired
-    private AppUserService service;
+    public AppUserController(AppUserService service) {
+        this.service = service;
+    }
     @GetMapping("/{id}")
     @UserSecured
     AppUser getUser(@PathVariable int id){
