@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AppUserRepository extends JpaRepository<AppUser,Integer> {
     AppUser getAppUserByUsername(String username);
+    AppUser getAppUserByFacebookId(String id);
+    AppUser getAppUserByGoogleId(String id);
 }
