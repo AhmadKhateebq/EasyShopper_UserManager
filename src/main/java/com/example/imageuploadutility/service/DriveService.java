@@ -29,7 +29,7 @@ public class DriveService {
             GoogleNetHttpTransport.newTrustedTransport (),
             JacksonFactory.getDefaultInstance (),
             credential)
-            .setApplicationName ("Your Application Name")
+            .setApplicationName ("easy shopper")
             .build ();
     public DriveService() throws IOException, GeneralSecurityException {
     }

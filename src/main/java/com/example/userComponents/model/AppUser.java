@@ -19,4 +19,10 @@ public class AppUser {
     String fname;
     String lname;
     String email;
+    @Column(name = "facebook_id")
+    String facebookId;
+    @Column(name = "google_id")
+    String googleId;
+    @Column(name = "picture_url")
+    String pictureUrl;
 }
