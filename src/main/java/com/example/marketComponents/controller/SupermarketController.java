@@ -2,7 +2,10 @@ package com.example.marketComponents.controller;
 
 import com.example.annotation.AdminSecured;
 import com.example.marketComponents.controller.util.ProductDto;
+import com.example.marketComponents.dto.Coordinates;
+import com.example.marketComponents.dto.SupermarketUserList;
 import com.example.marketComponents.exception.ResourceNotFoundException;
+import com.example.marketComponents.model.Product;
 import com.example.marketComponents.model.Supermarket;
 import com.example.marketComponents.model.SupermarketProduct;
 import com.example.marketComponents.repository.SupermarketProductRepository;
@@ -99,5 +102,15 @@ public class SupermarketController {
     public ResponseEntity<Void> addProductFromSupermarket(@PathVariable Long supermarketId, @PathVariable Long productId, @RequestBody ProductDto productDto) {
         supermarketService.addProductFromSupermarket (productId, supermarketId, productDto);
         return new ResponseEntity<> (HttpStatus.NO_CONTENT);
+    }
+    @PostMapping("/near/{radius}")
+    public ResponseEntity<List<Supermarket>> getNearSupermarkets(@RequestBody Coordinates userCo, @PathVariable double radius){
+        return ResponseEntity.ok (supermarketService.searchInTheArea (userCo,radius));
+    }
+    @PostMapping("/near-with-items/{radius}")
+    public ResponseEntity<List<SupermarketUserList>> getNearSupermarketsContainingList(@RequestBody Coordinates userCo,
+                                                                                       @PathVariable double radius,
+                                                                                       @RequestBody List<Product>products){
+        return ResponseEntity.ok (supermarketService.searchInAreaContainingProducts (userCo,radius,products));
     }
 }
