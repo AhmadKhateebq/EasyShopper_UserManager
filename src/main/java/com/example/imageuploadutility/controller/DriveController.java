@@ -17,17 +17,17 @@ import java.util.List;
 public class DriveController {
     @Autowired
     DriveService service ;
-    @PostMapping("/upload/{path}")
-    public String uploadImage(@RequestParam("image") MultipartFile imageFile, @PathVariable int path) {
+    @PostMapping("/upload/{path}/{id}")
+    public String uploadImage(@RequestParam("image") MultipartFile imageFile, @PathVariable int path,@PathVariable long id) {
         try {
             System.out.println (imageFile.getOriginalFilename ());
             String filePath = "C:\\Users\\Ahmad Khateeb\\Pictures\\uploadedimages\\" + imageFile.getOriginalFilename (); // Replace with your desired file path
             File destinationFile = new File (filePath);
             FileCopyUtils.copy (imageFile.getBytes (), destinationFile);
-            String id = service.uploadImageToDrive (destinationFile,path);
+            String imageId = service.uploadImageToDrive (destinationFile,path,id);
             destinationFile.delete ();
-            System.out.println (id);
-            return id;
+            System.out.println (imageId);
+            return imageId;
         } catch (IOException e) {
             e.printStackTrace ();
             System.out.println ("image upload failed");
