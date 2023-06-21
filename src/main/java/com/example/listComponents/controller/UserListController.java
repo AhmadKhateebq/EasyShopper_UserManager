@@ -69,7 +69,8 @@ public class UserListController {
 
     @UserSecured
     @DeleteMapping("/{userId}/list/{id}")
-    public ResponseEntity<?> deleteUserList(@PathVariable int userId, @PathVariable Long id) {
+    public ResponseEntity<?> deleteUserList(@PathVariable int userId, @PathVariable Long id)
+    {
         userListService.deleteById (id);
         return ResponseEntity.noContent ().build ();
     }

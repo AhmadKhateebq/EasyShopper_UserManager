@@ -15,4 +15,6 @@ public class SupermarketUserList {
     List<Product> contains;
     List<Product> dontContains;
     double containPercentage;
+    int originalItemsSize;
+    int containingSize;
 }

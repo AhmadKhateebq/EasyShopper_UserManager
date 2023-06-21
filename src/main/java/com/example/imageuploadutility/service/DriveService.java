@@ -1,6 +1,11 @@
 package com.example.imageuploadutility.service;
 
 import com.example.imageuploadutility.model.FileInfo;
+import com.example.marketComponents.exception.ResourceNotFoundException;
+import com.example.marketComponents.model.Product;
+import com.example.marketComponents.service.ProductService;
+import com.example.userComponents.model.AppUser;
+import com.example.userComponents.service.AppUserService;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.FileContent;
@@ -19,6 +24,10 @@ import java.util.List;
 
 @Service
 public class DriveService {
+    final
+    AppUserService userService;
+    final
+    ProductService productService;
     String itemFolderId = "1szEE172WB3oNzQSpwGqEfeuaeUIHQ7UC";
     String userFolderId = "1aDkR3Os65yw2MeLzoU8BB4GE3y2oo_A9";
 
@@ -31,10 +40,12 @@ public class DriveService {
             credential)
             .setApplicationName ("easy shopper")
             .build ();
-    public DriveService() throws IOException, GeneralSecurityException {
+    public DriveService(AppUserService userService, ProductService productService) throws IOException, GeneralSecurityException {
+        this.userService = userService;
+        this.productService = productService;
     }
 
-    public String uploadImageToDrive(java.io.File imageFile,int path) {
+    public String uploadImageToDrive(java.io.File imageFile, int path, long id) {
         try {
             File fileMetadata = new File ();
             fileMetadata.setName (imageFile.getName ());
@@ -43,10 +54,22 @@ public class DriveService {
             File uploadedFile = driveService.files ().create (fileMetadata, mediaContent)
                     .setFields ("id")
                     .execute ();
-            return "https://drive.google.com/file/d/"+uploadedFile.getId ();
+            String imageUrl = "https://drive.google.com/uc?export=download&id="+uploadedFile.getId ();
+            if (path == 1) {
+                Product product = productService.getProductById (id);
+                product.setImageUrl (imageUrl);
+                productService.updateProduct (id,product);
+            }else {
+                AppUser user = userService.getUser ((int)id);
+                user.setPictureUrl (imageUrl);
+                userService.updateUser ((int)id,user);
+            }
+            return "https://drive.google.com/uc?export=download&id="+uploadedFile.getId ();
         } catch (IOException e) {
             e.printStackTrace ();
             return "Image upload failed";
+        } catch (Exception e) {
+            throw new RuntimeException (e);
         }
     }
     public List<FileInfo> retrieveFileInfosFromDrive() throws IOException {

@@ -4,9 +4,9 @@ http:\localhost:8085\admin
 
  ------ 
 http:\localhost:8085\list
+Delete : [/{userId}/list/{id}] | deleteUserList
 Put : [/{userId}/list/{id}] | updateUserList
 Post : [/{userId}/list] | createUserList
-Delete : [/{userId}/list/{id}] | deleteUserList
 Get : [/{userId}/list] | getUserListByUserId
 
  ------ 

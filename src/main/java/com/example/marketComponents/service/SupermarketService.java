@@ -128,6 +128,8 @@ public class SupermarketService {
         }
         data.setContains (intersection);
         data.setDontContains (nonIntersection);
+        data.setContainingSize (intersection.size ());
+        data.setOriginalItemsSize (products.size ());
         double percentage = (double) intersection.size () / products.size () * 100;
         data.setContainPercentage (percentage);
         return data;
