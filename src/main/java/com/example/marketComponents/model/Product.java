@@ -28,7 +28,7 @@ public class Product {
     @Column(name = "description")
     private String description;
     @Column(name = "image_url")
-    private String imageUrl;
+    private String imageUrl = "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg";
     // getters and setters
 }
 
