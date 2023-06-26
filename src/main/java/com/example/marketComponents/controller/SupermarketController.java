@@ -10,17 +10,20 @@ import com.example.marketComponents.model.Supermarket;
 import com.example.marketComponents.model.SupermarketProduct;
 import com.example.marketComponents.repository.SupermarketProductRepository;
 import com.example.marketComponents.service.SupermarketService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/supermarkets")
 public class SupermarketController {
     private final SupermarketService supermarketService;
     private final SupermarketProductRepository supermarketProductRepository;
+    private static final Logger log = LoggerFactory.getLogger (SupermarketController.class);
 
     public SupermarketController(SupermarketService supermarketService, SupermarketProductRepository supermarketProductRepository) {
         this.supermarketService = supermarketService;
@@ -103,14 +106,16 @@ public class SupermarketController {
         supermarketService.addProductFromSupermarket (productId, supermarketId, productDto);
         return new ResponseEntity<> (HttpStatus.NO_CONTENT);
     }
+
     @PostMapping("/near/{radius}")
-    public ResponseEntity<List<Supermarket>> getNearSupermarkets(@RequestBody Coordinates userCo, @PathVariable double radius){
-        return ResponseEntity.ok (supermarketService.searchInTheArea (userCo,radius));
+    public ResponseEntity<List<Supermarket>> getNearSupermarkets(@RequestBody Coordinates userCo, @PathVariable double radius) {
+        return ResponseEntity.ok (supermarketService.searchInTheArea (userCo, radius));
     }
+
     @PostMapping("/near-with-items/{radius}")
-    public ResponseEntity<List<SupermarketUserList>> getNearSupermarketsContainingList(@RequestBody Coordinates userCo,
+    public ResponseEntity<List<SupermarketUserList>> getNearSupermarketsContainingList(
                                                                                        @PathVariable double radius,
-                                                                                       @RequestBody List<Product>products){
-        return ResponseEntity.ok (supermarketService.searchInAreaContainingProducts (userCo,radius,products));
+                                                                                       @RequestBody Map<String, Object> requestBody) {
+        return ResponseEntity.ok (supermarketService.searchInAreaContainingProducts (radius, requestBody));
     }
 }

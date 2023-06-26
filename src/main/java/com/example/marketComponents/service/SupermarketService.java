@@ -1,6 +1,7 @@
 package com.example.marketComponents.service;
 
 import com.example.marketComponents.controller.util.ProductDto;
+import com.example.marketComponents.dto.Coordinates;
 import com.example.marketComponents.dto.SupermarketUserList;
 import com.example.marketComponents.exception.ResourceNotFoundException;
 import com.example.marketComponents.model.Product;
@@ -9,15 +10,13 @@ import com.example.marketComponents.model.SupermarketProduct;
 import com.example.marketComponents.repository.ProductRepository;
 import com.example.marketComponents.repository.SupermarketProductRepository;
 import com.example.marketComponents.repository.SupermarketRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import com.example.marketComponents.dto.Coordinates;
 
 import javax.persistence.EntityNotFoundException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SupermarketService {
@@ -27,7 +26,6 @@ public class SupermarketService {
     SupermarketProductService supermarketProductService;
     final
     ProductRepository productRepository;
-    private static final Logger log = LoggerFactory.getLogger (SupermarketService.class);
     final private SupermarketProductRepository supermarketProductRepository;
 
     public SupermarketService(SupermarketRepository supermarketRepository, SupermarketProductService supermarketProductService, ProductRepository productRepository, SupermarketProductRepository supermarketProductRepository) {
@@ -98,13 +96,17 @@ public class SupermarketService {
         supermarketProduct.setSupermarket (supermarket);
         supermarketProductService.save (supermarketProduct);
     }
+
     public List<Supermarket> searchInTheArea(Coordinates userCo, double radius) {
         return this.getAllSupermarkets ()
                 .stream ()
                 .filter (supermarket -> distanceFromPoint (userCo, parseCoordinates (supermarket), radius))
                 .toList ();
     }
-    public List<SupermarketUserList> searchInAreaContainingProducts(Coordinates userCo, double radius, List<Product> products) {
+
+    public List<SupermarketUserList> searchInAreaContainingProducts(double radius, Map<String, Object> requestBody) {
+        Coordinates userCo = coordinatesDecoder (requestBody);
+        List<Product> products = productsListDecoder (requestBody);
         return searchInTheArea (userCo, radius)
                 .stream ()
                 .map (supermarket -> getSupermarketListData (supermarket, products))
@@ -130,13 +132,18 @@ public class SupermarketService {
         data.setDontContains (nonIntersection);
         data.setContainingSize (intersection.size ());
         data.setOriginalItemsSize (products.size ());
-        double percentage = (double) intersection.size () / products.size () * 100;
+        data.setSupermarket (supermarket);
+        double percentage = (double) intersection.size () / products.size () * 100.00;
+        percentage = Math.round (percentage * 100.0) / 100.0;
         data.setContainPercentage (percentage);
         return data;
     }
 
     private boolean distanceFromPoint(Coordinates userLocation, Coordinates marketLocation, double radius) {
         double distance = calculateDistance (userLocation, marketLocation);
+        System.out.println (distance);
+        System.out.println ("////////////");
+        System.out.println (radius);
         return (distance <= radius);
     }
 
@@ -168,6 +175,33 @@ public class SupermarketService {
         DecimalFormat decimalFormat = new DecimalFormat ("#.##");
 
         return Double.parseDouble (decimalFormat.format (earthRadius * c));
+    }
+
+    private Coordinates coordinatesDecoder(Map<String, Object> requestBody) {
+        Map<String, String> coordinatesMap = ((List<Map<String, String>>) requestBody.get ("Coordinates")).stream ().findFirst ().get ();
+        Coordinates coordinates = new Coordinates ();
+        coordinates.setX (Double.parseDouble (coordinatesMap.get ("x")));
+        coordinates.setY (Double.parseDouble (coordinatesMap.get ("y")));
+        return coordinates;
+    }
+
+    public List<Product> productsListDecoder(Map<String, Object> requestBody) {
+        List<Map<String, Object>> productsMapList = ((List<Map<String, Object>>) requestBody.get ("products"));
+        List<Product> products = new ArrayList<> ();
+        for (Map<String, Object> stringMapMap : productsMapList) {
+            Product product = new Product ();
+            if (stringMapMap.containsKey ("id"))
+                product.setId (Long.valueOf (String.valueOf (stringMapMap.get ("id"))));
+            else
+                product.setId (-1L);
+            product.setName (String.valueOf (stringMapMap.get ("name")));
+            product.setBrand (String.valueOf (stringMapMap.get ("brand")));
+            product.setCategory (String.valueOf (stringMapMap.get ("category")));
+            product.setDescription (String.valueOf (stringMapMap.get ("description")));
+            product.setImageUrl (String.valueOf (stringMapMap.get ("imageUrl")));
+            products.add (product);
+        }
+        return products;
     }
 }
 

@@ -28,6 +28,8 @@ public class ProductService {
     }
 
     public Product createProduct(Product product) {
+        if (product.getImageUrl () == null)
+            product.setImageUrl ("https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg");
         return productRepository.save(product);
     }
 
