@@ -8,6 +8,7 @@ import com.example.marketComponents.exception.ResourceNotFoundException;
 import com.example.listComponents.model.UserList;
 import com.example.listComponents.service.UserListService;
 import com.example.marketComponents.model.Product;
+import com.restfb.types.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -83,6 +84,11 @@ public class UserListController {
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound ().build ();
         }
+    }
+    @ViewerSecured
+    @GetMapping("list/shared/userId")
+    public ResponseEntity<List<UserList>> GetUserListSharedWithUser(@PathVariable("userId") int userId) {
+        return ResponseEntity.ok (userListService.getListsSharedWithUser (userId));
     }
 
     @EditorSecured

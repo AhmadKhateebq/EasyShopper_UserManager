@@ -1,17 +1,18 @@
 package com.example.userComponents.controller;
 
+import com.example.userComponents.exceptions.InvalidPasswordException;
 import com.example.userComponents.exceptions.UserNotFoundException;
+import com.example.userComponents.exceptions.UsernameExistsException;
 import com.example.userComponents.exceptions.WrongPasswordException;
 import com.example.userComponents.model.LoginUser;
+import com.example.userComponents.model.PasswordUpdateRequest;
 import com.example.userComponents.service.LoginService;
 import com.example.userComponents.service.RegisterService;
 import com.example.userComponents.util.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping
@@ -30,8 +31,8 @@ public class LoginAndRegisterController {
     public ResponseEntity<Object> register(@RequestBody UserDto userDto) {
         try {
             return ResponseEntity.ok (registerServices.register (userDto));
-        }catch (UserNotFoundException e1){
-            return ResponseEntity.status (418).build ();
+        }catch (UsernameExistsException e) {
+            return ResponseEntity.status (HttpStatus.NOT_ACCEPTABLE).build ();
         }
 
     }
@@ -46,4 +47,5 @@ public class LoginAndRegisterController {
         }
 
     }
+
 }

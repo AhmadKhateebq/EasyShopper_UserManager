@@ -1,6 +1,7 @@
 package com.example.userComponents.service;
 
 import com.example.userComponents.exceptions.UserNotFoundException;
+import com.example.userComponents.exceptions.UsernameExistsException;
 import com.example.userComponents.model.AppUser;
 import com.example.userComponents.model.PasswordUser;
 import com.example.userComponents.util.UserDto;
@@ -24,7 +25,7 @@ public class RegisterService {
         this.jwtUtil = jwtUtil;
     }
 
-    public String register(UserDto dto) throws UserNotFoundException {
+    public String register(UserDto dto) throws UsernameExistsException {
         if (appUserService.getUserByUsername (dto.getUsername ()) == null) {
             PasswordUser passwordUser = new PasswordUser ();
             AppUser appUser = appUserService.saveUser (UserPasswordMapper.USER_PASSWORD_DTO (dto));
@@ -32,7 +33,7 @@ public class RegisterService {
             passwordUser.setUser (appUserService.getUserByUsername (dto.getUsername ()));
             passwordService.saveUser (passwordUser);
             return jwtUtil.generateToken (appUser.getUsername (), appUser.getId ());
-        } else throw new UserNotFoundException ();
+        } else throw new UsernameExistsException ();
     }
 
 }

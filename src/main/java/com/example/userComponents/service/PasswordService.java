@@ -1,7 +1,9 @@
 package com.example.userComponents.service;
 
 
+import com.example.userComponents.exceptions.InvalidPasswordException;
 import com.example.userComponents.exceptions.UserNotFoundException;
+import com.example.userComponents.exceptions.WrongPasswordException;
 import com.example.userComponents.model.PasswordUser;
 import com.example.userComponents.repository.PasswordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,4 +53,5 @@ public class PasswordService {
     public PasswordUser searchByUserId(int id) {
         return repository.getPasswordUserByUserId (id);
     }
+
 }
