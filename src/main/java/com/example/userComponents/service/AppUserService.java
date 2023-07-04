@@ -8,6 +8,7 @@ import com.example.userComponents.exceptions.WrongPasswordException;
 import com.example.userComponents.model.AppUser;
 import com.example.userComponents.model.PasswordUser;
 import com.example.userComponents.repository.AppUserRepository;
+import com.example.userComponents.util.PasswordEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -47,7 +48,7 @@ public class AppUserService {
     }
 
     public void deleteUserById(int id) throws UserNotFoundException {
-        passwordService.deleteUser (passwordService.getUser (id));
+        passwordService.deleteUser (id);
         repository.deleteById (id);
     }
 
@@ -83,19 +84,22 @@ public class AppUserService {
     }
 
     public void updatePassword(int id, String currentPassword, String newPassword) throws WrongPasswordException, InvalidPasswordException {
-        PasswordUser user = passwordService.searchByUserId (id);
+        PasswordUser user = passwordService.getUser(id);
         // Verify current password
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder ();
-        if (!passwordEncoder.matches (currentPassword, user.getPassword ())) {
-            throw new WrongPasswordException ("Current password is incorrect");
+        BCryptPasswordEncoder passwordEncoder = PasswordEncryptor.getInstance();
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new WrongPasswordException("Current password is incorrect");
         }
         // Check if new password is the same as current password
-        if (passwordEncoder.matches (newPassword, user.getPassword ())) {
-            throw new InvalidPasswordException ("New password must be different from the current password");
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            throw new InvalidPasswordException("New password must be different from the current password");
         }
         // Encrypt and update new password
-        String encodedPassword = passwordEncoder.encode (newPassword);
-        user.setPassword (encodedPassword);
-        passwordService.saveUser (user);
+        user.setPassword(newPassword);
+        passwordService.saveUser(user);
+    }
+
+    private boolean check(String password,String hashed){
+        return PasswordEncryptor.getInstance ().matches (password,hashed);
     }
 }

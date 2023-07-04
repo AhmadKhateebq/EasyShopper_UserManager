@@ -10,6 +10,7 @@ import com.example.userComponents.exceptions.WrongPasswordException;
 import com.example.userComponents.model.AppUser;
 import com.example.userComponents.model.PasswordUpdateRequest;
 import com.example.userComponents.service.AppUserService;
+import com.example.userComponents.util.UsernameIdDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +44,16 @@ public class AppUserController {
         return service.getAllUsers ();
     }
 
+    @GetMapping("/usernames")
+    @UserSecured
+    List<UsernameIdDto> getAllUsernames() {
+        return service.getAllUsers ().stream ()
+                .map (
+                        (user) -> new UsernameIdDto (user.getId (), user.getUsername ())
+                ).toList ();
+    }
+
+
     @DeleteMapping("/{id}")
     @AdminSecured
     ResponseEntity<Object> deleteUser(@PathVariable int id) {
@@ -64,15 +75,16 @@ public class AppUserController {
             return ResponseEntity.status (HttpStatus.NOT_ACCEPTABLE).build ();
         }
     }
+
     @PutMapping("/{id}/password")
     public ResponseEntity<String> updatePassword(@PathVariable int id, @RequestBody PasswordUpdateRequest request) {
         try {
-            service.updatePassword(id, request.getCurrentPassword(), request.getNewPassword());
-            return ResponseEntity.ok("Password updated successfully");
+            service.updatePassword (id, request.getCurrentPassword (), request.getNewPassword ());
+            return ResponseEntity.ok ("Password updated successfully");
         } catch (WrongPasswordException e) {//401
-            return ResponseEntity.status (HttpStatus.UNAUTHORIZED).body("Current password is incorrect");
+            return ResponseEntity.status (HttpStatus.UNAUTHORIZED).body ("Current password is incorrect");
         } catch (InvalidPasswordException e) {//406
-            return ResponseEntity.status (HttpStatus.NOT_ACCEPTABLE).body("New password must be different from the current password");
+            return ResponseEntity.status (HttpStatus.NOT_ACCEPTABLE).body ("New password must be different from the current password");
         }
     }
 }
