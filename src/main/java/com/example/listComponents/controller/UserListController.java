@@ -4,11 +4,10 @@ import com.example.annotation.AdminSecured;
 import com.example.annotation.EditorSecured;
 import com.example.annotation.UserSecured;
 import com.example.annotation.ViewerSecured;
-import com.example.marketComponents.exception.ResourceNotFoundException;
 import com.example.listComponents.model.UserList;
 import com.example.listComponents.service.UserListService;
+import com.example.marketComponents.exception.ResourceNotFoundException;
 import com.example.marketComponents.model.Product;
-import com.restfb.types.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,21 +56,18 @@ public class UserListController {
     @UserSecured
     @PutMapping("/{userId}/list/{id}")
     public ResponseEntity<Object> updateUserList(@PathVariable int userId, @PathVariable Long id, @RequestBody UserList userListRequest) {
-        UserList userList;
         try {
-            userList = userListService.findById (id);
+            userListService.updateUserList (id, userListRequest);
+            return ResponseEntity.ok ().build ();
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status (418).build ();
         }
-        userList.setName (userListRequest.getName ());
-        userListService.save (userList);
-        return ResponseEntity.accepted ().build ();
+
     }
 
     @UserSecured
     @DeleteMapping("/{userId}/list/{id}")
-    public ResponseEntity<?> deleteUserList(@PathVariable int userId, @PathVariable Long id)
-    {
+    public ResponseEntity<?> deleteUserList(@PathVariable int userId, @PathVariable Long id) {
         userListService.deleteById (id);
         return ResponseEntity.noContent ().build ();
     }
@@ -85,6 +81,7 @@ public class UserListController {
             return ResponseEntity.notFound ().build ();
         }
     }
+
     @ViewerSecured
     @GetMapping("list/shared/userId")
     public ResponseEntity<List<UserList>> GetUserListSharedWithUser(@PathVariable("userId") int userId) {

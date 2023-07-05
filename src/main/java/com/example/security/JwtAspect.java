@@ -127,7 +127,8 @@ public class JwtAspect {
                 long listId = (long) methodArgs[0];
                 UserList userList = getUserListById(listId);
                 int userId = jwtUtil.extractId(token);
-                if (userList == null || isListNotSharedWithUser (userList, userId)) {
+
+                if (userList == null || (userList.getUserId ()!=userId&&isListNotSharedWithUser (userList, userId))) {
                     sendError(HttpStatus.UNAUTHORIZED.value(), "list not shared with you");
                 }
             }

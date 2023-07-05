@@ -8,6 +8,7 @@ import com.example.listComponents.repository.UserListRepository;
 import com.example.marketComponents.exception.ResourceNotFoundException;
 import com.example.marketComponents.model.Product;
 import com.example.marketComponents.service.ProductService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -90,5 +91,15 @@ public class UserListService {
     }
     public List<Product> getListItemsById(long listId) throws ResourceNotFoundException {
         return findById(listId).getItems ();
+    }
+    public UserList updateUserList(long id, UserList userListRequest) throws ResourceNotFoundException {
+        UserList existingUserList = userListRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("UserList not found with id: " + id));
+
+        // Update the fields of the existing UserList with the values from userListRequest
+        existingUserList.setName(userListRequest.getName());
+        existingUserList.setPrivate (userListRequest.isPrivate ());
+        existingUserList.setUsersSharedWith (userListRequest.getUsersSharedWith ());
+        return userListRepository.save(existingUserList);
     }
 }

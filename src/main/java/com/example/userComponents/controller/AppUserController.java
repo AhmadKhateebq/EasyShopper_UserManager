@@ -45,7 +45,6 @@ public class AppUserController {
     }
 
     @GetMapping("/usernames")
-    @UserSecured
     List<UsernameIdDto> getAllUsernames() {
         return service.getAllUsers ().stream ()
                 .map (
