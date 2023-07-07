@@ -5,6 +5,7 @@ import com.example.marketComponents.dto.Coordinates;
 import com.example.marketComponents.dto.SupermarketUserList;
 import com.example.marketComponents.exception.ResourceNotFoundException;
 import com.example.marketComponents.model.Product;
+import com.example.marketComponents.model.ProductPrice;
 import com.example.marketComponents.model.Supermarket;
 import com.example.marketComponents.model.SupermarketProduct;
 import com.example.marketComponents.repository.ProductRepository;
@@ -114,25 +115,39 @@ public class SupermarketService {
     }
 
     private SupermarketUserList getSupermarketListData(Supermarket supermarket, List<Product> products) {
-        List<Product> supermarketProducts = supermarketProductRepository
-                .getSupermarketProductBySupermarketId (supermarket.getId ())
-                .stream ()
+        List<SupermarketProduct> supermarketProducts = supermarketProductRepository
+                .getSupermarketProductBySupermarketId (supermarket.getId ());
+        List<Product> productList = supermarketProducts.stream ()
                 .map (SupermarketProduct::getProduct)
                 .toList ();
         SupermarketUserList data = new SupermarketUserList ();
         List<Product> intersection = new ArrayList<> ();
         List<Product> nonIntersection = new ArrayList<> ();
         for (Product product : products) {
-            if (supermarketProducts.contains (product)) {
+            if (productList.contains (product)) {
                 intersection.add (product);
             } else
                 nonIntersection.add (product);
         }
-        data.setContains (intersection);
+        List<ProductPrice> contains = new ArrayList<> ();
+        for (int i = 0; i < productList.size (); i++) {
+            if (intersection.contains (productList.get (i))){
+                SupermarketProduct product = supermarketProducts.get (i);
+                contains.add (new ProductPrice (product.getId (),product.getProduct (),product.getPrice (),product.getStock ()));
+            }
+        }
+        data.setContains (contains);
         data.setDontContains (nonIntersection);
         data.setContainingSize (intersection.size ());
         data.setOriginalItemsSize (products.size ());
         data.setSupermarket (supermarket);
+        double total = 0;
+
+        for (ProductPrice supermarketProduct : contains) {
+            total += supermarketProduct.getPrice ();
+        }
+
+        data.setTotal (total);
         double percentage = (double) intersection.size () / products.size () * 100.00;
         percentage = Math.round (percentage * 100.0) / 100.0;
         data.setContainPercentage (percentage);
@@ -141,9 +156,6 @@ public class SupermarketService {
 
     private boolean distanceFromPoint(Coordinates userLocation, Coordinates marketLocation, double radius) {
         double distance = calculateDistance (userLocation, marketLocation);
-        System.out.println (distance);
-        System.out.println ("////////////");
-        System.out.println (radius);
         return (distance <= radius);
     }
 
