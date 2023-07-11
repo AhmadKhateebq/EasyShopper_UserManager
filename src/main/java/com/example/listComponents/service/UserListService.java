@@ -1,14 +1,15 @@
 package com.example.listComponents.service;
 
 import com.example.listComponents.model.SequenceCounter;
-import com.example.listComponents.model.SharedWith;
 import com.example.listComponents.model.UserList;
 import com.example.listComponents.repository.SequenceRepository;
 import com.example.listComponents.repository.UserListRepository;
 import com.example.marketComponents.exception.ResourceNotFoundException;
 import com.example.marketComponents.model.Product;
 import com.example.marketComponents.service.ProductService;
-import org.springframework.http.ResponseEntity;
+import com.example.userComponents.model.ListNickname;
+import com.example.userComponents.service.ListNicknameService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,11 +19,14 @@ public class UserListService {
     private final UserListRepository userListRepository;
     private final ProductService productService;
     private final SequenceRepository sequenceRepository;
+    private final ListNicknameService nicknameService;
 
-    public UserListService(UserListRepository userListRepository, ProductService productService, SequenceRepository sequenceRepository) {
+    @Autowired
+    public UserListService(UserListRepository userListRepository, ProductService productService, SequenceRepository sequenceRepository, ListNicknameService nicknameService) {
         this.userListRepository = userListRepository;
         this.productService = productService;
         this.sequenceRepository = sequenceRepository;
+        this.nicknameService = nicknameService;
     }
 
     public List<UserList> findAll() {
@@ -44,62 +48,83 @@ public class UserListService {
     }
 
     public List<UserList> getListsSharedWithUser(int id) {
-        return userListRepository.findAll ()
+        List<UserList> userLists = userListRepository.findAll ()
                 .stream ()
                 .filter (userList -> !userList.isPrivate ())
                 .filter (userList -> userList.sharedWith (id))
                 .toList ();
-    }
-
-    public void shareListWith(long listId, int userId,boolean canEdit) throws ResourceNotFoundException {
-        UserList list = userListRepository.findById (listId).orElseThrow (ResourceNotFoundException::new);
-        list.getUsersSharedWith ().add (new SharedWith (userId,canEdit));
-        userListRepository.save (list);
-    }
-    public void removeSharedListfrom(long listId, int userId) throws ResourceNotFoundException {
-        UserList list = userListRepository.findById (listId).orElseThrow (ResourceNotFoundException::new);
-        SharedWith userSharedWith = list.getUsersSharedWith ()
+        List<ListNickname> nicknames = nicknameService
+                .getNickname (id);
+        List<Long> nicknamesId = nicknames
                 .stream ()
-                .filter (sharedWith -> sharedWith.contains (userId))
-                .findFirst ()
-                .orElseThrow (ResourceNotFoundException::new);
+                .map (ListNickname::getListId)
+                .toList ();
+        userLists.forEach (list -> {
+            if (nicknamesId.contains (list.getId ())) {
+                String name = nicknames.stream ()
+                        .filter (nickname -> nickname.getListId () == list.getId ())
+                        .findFirst ()
+                        .orElse (new ListNickname ()).getNickname ();
+                list.setName (name);
+            }
+        });
+        return userLists;
+    }
 
-        list.getUsersSharedWith ().remove (userSharedWith);
-        userListRepository.save (list);
-    }
-    public void makePublic(long listId,boolean isPublic) throws ResourceNotFoundException {
-        UserList list = userListRepository.findById (listId).orElseThrow (ResourceNotFoundException::new);
-        list.setPrivate (isPublic);
-        userListRepository.save (list);
-    }
-    public void addItemToUserList(long listId,long itemId) throws ResourceNotFoundException {
+    public void addItemToUserList(long listId, long itemId) throws ResourceNotFoundException {
         UserList list = userListRepository.findById (listId).orElseThrow (ResourceNotFoundException::new);
         list.getItems ().add (productService.getProductById (itemId));
         userListRepository.save (list);
     }
-    public void removeItemFromUserList(long listId,long itemId) throws ResourceNotFoundException {
+
+    public void removeItemFromUserList(long listId, long itemId) throws ResourceNotFoundException {
         UserList list = userListRepository.findById (listId).orElseThrow (ResourceNotFoundException::new);
         list.getItems ().remove (productService.getProductById (itemId));
         userListRepository.save (list);
     }
+
     public void deleteById(Long id) {
         userListRepository.deleteById (id);
+        nicknameService.deleteAllNicknameByListId (id);
     }
 
     public List<UserList> getUsersListByUserId(int id) {
         return userListRepository.getUserListByUserId (id);
     }
-    public List<Product> getListItemsById(long listId) throws ResourceNotFoundException {
-        return findById(listId).getItems ();
-    }
-    public UserList updateUserList(long id, UserList userListRequest) throws ResourceNotFoundException {
-        UserList existingUserList = userListRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("UserList not found with id: " + id));
 
-        // Update the fields of the existing UserList with the values from userListRequest
-        existingUserList.setName(userListRequest.getName());
+    public List<Product> getListItemsById(long listId) throws ResourceNotFoundException {
+        return findById (listId).getItems ();
+    }
+
+    public void updateUserList(long id, UserList userListRequest) throws ResourceNotFoundException {
+        UserList existingUserList = userListRepository.findById (id)
+                .orElseThrow (() -> new ResourceNotFoundException ("UserList not found with id: " + id));
+        existingUserList.setName (userListRequest.getName ());
         existingUserList.setPrivate (userListRequest.isPrivate ());
         existingUserList.setUsersSharedWith (userListRequest.getUsersSharedWith ());
-        return userListRepository.save(existingUserList);
+        userListRepository.save (existingUserList);
     }
 }
+/*unused code
+//    public void shareListWith(long listId, int userId,boolean canEdit) throws ResourceNotFoundException {
+//        UserList list = userListRepository.findById (listId).orElseThrow (ResourceNotFoundException::new);
+//        list.getUsersSharedWith ().add (new SharedWith (userId,canEdit));
+//        userListRepository.save (list);
+//    }
+//    public void removeSharedListfrom(long listId, int userId) throws ResourceNotFoundException {
+//        UserList list = userListRepository.findById (listId).orElseThrow (ResourceNotFoundException::new);
+//        SharedWith userSharedWith = list.getUsersSharedWith ()
+//                .stream ()
+//                .filter (sharedWith -> sharedWith.contains (userId))
+//                .findFirst ()
+//                .orElseThrow (ResourceNotFoundException::new);
+//
+//        list.getUsersSharedWith ().remove (userSharedWith);
+//        userListRepository.save (list);
+//    }
+//    public void makePublic(long listId,boolean isPublic) throws ResourceNotFoundException {
+//        UserList list = userListRepository.findById (listId).orElseThrow (ResourceNotFoundException::new);
+//        list.setPrivate (isPublic);
+//        userListRepository.save (list);
+//    }
+ */
