@@ -19,11 +19,13 @@ import java.util.List;
 public class AppUserService {
     private final AppUserRepository repository;
     private final PasswordService passwordService;
+    private final ListNicknameService nicknameService;
 
     @Autowired
-    public AppUserService(PasswordService passwordService, AppUserRepository repository) {
+    public AppUserService(PasswordService passwordService, AppUserRepository repository, ListNicknameService nicknameService) {
         this.passwordService = passwordService;
         this.repository = repository;
+        this.nicknameService = nicknameService;
     }
 
     public AppUser getUser(int id) throws Exception {
@@ -50,6 +52,7 @@ public class AppUserService {
     public void deleteUserById(int id) throws UserNotFoundException {
         passwordService.deleteUser (id);
         repository.deleteById (id);
+        nicknameService.deleteAllNicknameByUserId (id);
     }
 
     public AppUser updateUser(int id, AppUser updatedUser) throws ResourceNotFoundException, UsernameExistsException {
@@ -99,7 +102,4 @@ public class AppUserService {
         passwordService.saveUser(user);
     }
 
-    private boolean check(String password,String hashed){
-        return PasswordEncryptor.getInstance ().matches (password,hashed);
-    }
 }

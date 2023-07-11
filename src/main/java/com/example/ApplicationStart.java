@@ -5,8 +5,11 @@ import com.example.controller.AdminController;
 import com.example.marketComponents.controller.ProductController;
 import com.example.listComponents.controller.UserListController;
 import com.example.userComponents.controller.AppUserController;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.messaging.FirebaseMessaging;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -106,4 +109,6 @@ public class ApplicationStart {
             return annotatedMethods;
         }
     }
+
+
 }

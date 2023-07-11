@@ -8,6 +8,10 @@ import com.example.listComponents.model.UserList;
 import com.example.listComponents.service.UserListService;
 import com.example.marketComponents.exception.ResourceNotFoundException;
 import com.example.marketComponents.model.Product;
+import com.example.userComponents.service.ListNicknameService;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,10 +21,12 @@ import java.util.List;
 @RestController
 public class UserListController {
     private final UserListService userListService;
+    private final ListNicknameService nicknameService;
 
     @Autowired
-    public UserListController(UserListService userListService) {
+    public UserListController(UserListService userListService, ListNicknameService nicknameService) {
         this.userListService = userListService;
+        this.nicknameService = nicknameService;
     }
 
     @AdminSecured
@@ -83,7 +89,7 @@ public class UserListController {
     }
 
     @ViewerSecured
-    @GetMapping("list/shared/userId")
+    @GetMapping("list/shared/{userId}")
     public ResponseEntity<List<UserList>> GetUserListSharedWithUser(@PathVariable("userId") int userId) {
         return ResponseEntity.ok (userListService.getListsSharedWithUser (userId));
     }
@@ -109,4 +115,24 @@ public class UserListController {
             return ResponseEntity.notFound ().build ();
         }
     }
+    @PostMapping("list/nickname/")
+    public ResponseEntity<Object> setNickname(@RequestBody NicknameRequest request) {
+        nicknameService.addNickname (request.getUserId (), request.getListId (), request.getNickname ());
+        return ResponseEntity.ok ().build ();
+    }
+    @PutMapping("list/nickname/")
+    public ResponseEntity<Object> changeNickname(@RequestBody NicknameRequest request) {
+        nicknameService.changeNickname (request.getUserId (), request.getListId (), request.getNickname ());
+        return ResponseEntity.ok ().build ();
+    }
+
+}
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+class NicknameRequest {
+    private int userId;
+    private long listId;
+    private String nickname;
 }
