@@ -37,11 +37,11 @@ public class UserListController {
 
     @ViewerSecured
     @GetMapping("/list/{id}")
-    public UserList getUserListById(@PathVariable Long id) {
+    public ResponseEntity<UserList> getUserListById(@PathVariable Long id) {
         try {
-            return userListService.findById (id);
+            return ResponseEntity.ok (userListService.findById (id));
         } catch (ResourceNotFoundException e) {
-            throw new RuntimeException (e);
+            return ResponseEntity.status (423).build ();
         }
     }
 
@@ -117,14 +117,10 @@ public class UserListController {
     }
     @PostMapping("list/nickname/")
     public ResponseEntity<Object> setNickname(@RequestBody NicknameRequest request) {
-        nicknameService.addNickname (request.getUserId (), request.getListId (), request.getNickname ());
+        nicknameService.changeOrSaveNickname (request.getUserId (), request.getListId (), request.getNickname ());
         return ResponseEntity.ok ().build ();
     }
-    @PutMapping("list/nickname/")
-    public ResponseEntity<Object> changeNickname(@RequestBody NicknameRequest request) {
-        nicknameService.changeNickname (request.getUserId (), request.getListId (), request.getNickname ());
-        return ResponseEntity.ok ().build ();
-    }
+
 
 }
 

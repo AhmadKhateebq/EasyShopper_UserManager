@@ -136,6 +136,8 @@ public class JwtAspect {
             sendError(HttpStatus.UNAUTHORIZED.value(), "no token found");
         } catch (SignatureException | MalformedJwtException a) {
             sendError(HttpStatus.UNAUTHORIZED.value(), "token invalid");
+        } catch (ClassCastException e){
+            return;
         }
     }
 

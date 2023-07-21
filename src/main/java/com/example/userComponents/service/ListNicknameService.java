@@ -20,13 +20,6 @@ public class ListNicknameService {
         return listNicknameRepository.findAllByUserId (userId);
     }
 
-    public void addNickname(int userId, long listId, String nickname) {
-        ListNickname newNickname = new ListNickname ();
-        newNickname.setUserId (userId);
-        newNickname.setListId (listId);
-        newNickname.setNickname (nickname);
-        listNicknameRepository.save (newNickname);
-    }
 
     public void deleteAllNicknameByUserId(int userId) {
         listNicknameRepository.deleteAllByUserId (userId);
@@ -36,7 +29,7 @@ public class ListNicknameService {
         listNicknameRepository.deleteAllByListId (listId);
     }
 
-    public void changeNickname(int userId, long listId, String name) {
+    public void changeOrSaveNickname(int userId, long listId, String name) {
         ListNickname nickname = listNicknameRepository.findByUserIdAndListId (userId, listId)
                 .orElse (new ListNickname (userId,listId,name));
         nickname.setNickname (name);

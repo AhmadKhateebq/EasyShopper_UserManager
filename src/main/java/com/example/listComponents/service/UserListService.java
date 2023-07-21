@@ -34,8 +34,14 @@ public class UserListService {
     }
 
     public UserList findById(Long id) throws ResourceNotFoundException {
-        return userListRepository.findById (id)
+        UserList list = userListRepository.findById (id)
                 .orElseThrow (() -> new ResourceNotFoundException ("User list not found with id " + id));
+        String nicknames = nicknameService
+                .getNickname (list.getUserId (), list.getId ());
+        if (nicknames!=null && !nicknames.isBlank ()) {
+            list.setName (nicknames);
+        }
+        return list;
     }
 
     public UserList save(UserList userList) {

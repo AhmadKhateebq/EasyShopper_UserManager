@@ -4,10 +4,10 @@ http:\localhost:8085\admin
 
  ------ 
 http:\localhost:8085\list
-Put : [/{userId}/list/{id}] | updateUserList
-Delete : [/{userId}/list/{id}] | deleteUserList
-Post : [/{userId}/list] | createUserList
 Get : [/{userId}/list] | getUserListByUserId
+Post : [/{userId}/list] | createUserList
+Delete : [/{userId}/list/{id}] | deleteUserList
+Put : [/{userId}/list/{id}] | updateUserList
 
  ------ 
 http:\localhost:8085\products
