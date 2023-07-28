@@ -28,7 +28,7 @@ public class LoginAndRegisterController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Object> register(@RequestBody UserDto userDto) {
+    public ResponseEntity<String> register(@RequestBody UserDto userDto) {
         try {
             return ResponseEntity.ok (registerServices.register (userDto));
         }catch (UsernameExistsException e) {

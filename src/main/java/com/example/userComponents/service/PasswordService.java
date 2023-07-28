@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class PasswordService {
     private final PasswordRepository repository;
@@ -32,7 +30,10 @@ public class PasswordService {
     }
 
     public void deleteUser(int id) {
-        repository.deleteById (id);
+        try {
+            repository.deleteById (repository.getPasswordUserByUserId (id).getId ());
+        } catch (Exception ignored) {
+        }
     }
 
 }

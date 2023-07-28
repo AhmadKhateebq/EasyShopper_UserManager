@@ -32,7 +32,7 @@ public class RegisterService {
             passwordUser.setPassword (dto.getPassword ());
             passwordUser.setUser (appUserService.getUserByUsername (dto.getUsername ()));
             passwordService.saveUser (passwordUser);
-            return jwtUtil.generateToken (appUser.getUsername (), appUser.getId ());
+            return jwtUtil.generateToken (appUser.getUsername (), appUser.getId ())+","+appUser.getId ();
         } else throw new UsernameExistsException ();
     }
 
