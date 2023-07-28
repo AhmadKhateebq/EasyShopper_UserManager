@@ -35,4 +35,7 @@ public class UserTokenService {
     public UserTokens addUserToken(UserTokens userToken) {
         return userTokenRepository.save(userToken);
     }
+    public void deleteUser(UserTokens userToken) {
+         userTokenRepository.delete (userToken);
+    }
 }

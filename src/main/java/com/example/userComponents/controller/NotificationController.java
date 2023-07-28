@@ -67,8 +67,8 @@ public class NotificationController {
         return userTokenService.addUserToken (userTokens);
     }
     @PostMapping("delete_user")
-    public UserTokens deleteToken(@RequestBody UserTokens userTokens) {
-        return userTokenService.addUserToken (userTokens);
+    public void deleteToken(@RequestBody UserTokens userTokens) {
+         userTokenService.deleteUser (userTokens);
     }
 
 }
